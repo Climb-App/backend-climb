@@ -1,5 +1,11 @@
 from django.shortcuts import render
-from rest_framework import generics
+from rest_framework import generics ,filters
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated , BasePermission , IsAdminUser
+
+
+#Permissions
+from .permissions import OnlyAdminCanCreate
 
 # Create your views here.
 
@@ -68,7 +74,10 @@ class GoalRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 class WorkSpaceRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = WorkSpace.objects.all()
-    serializer_class = WorkSpaceListModelSerializer  
+    serializer_class = WorkSpaceListModelSerializer
+    permission_classes=[IsAuthenticated,OnlyAdminCanCreate]  
+    #authentication_classes=[TokenAuthentication] 
+    #sin ponerlo en settings e importando desde aqui pero son diferentes formas de autenticarte
 
 class WorkSpaceRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 
