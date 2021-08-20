@@ -1,30 +1,30 @@
 from django.db import models
 from rest_framework import serializers
-from .models import Badge,Role,Multiplicator,Rewards,Team_User,Task,Goal,WorkSpace,Company_user,Workspace_team_user
+from .models import Badge,Role,Multiplicator,Reward,TeamUser,Task,Goal,Workspace,CompanyUser
+
+class RoleListModelSerializer( serializers.ModelSerializer ):
+    class Meta:
+        model = Role
+        fields = [ "name" ]
 
 class BadgeListModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Badge
         fields = ["name","description"]
-
-class RoleListModelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Role
-        fields = ["name"]
         
 class MultiplicatorListModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Multiplicator
         fields = ["racha","multiplicator"]
 
-class RewardsListModelSerializer(serializers.ModelSerializer):
+class RewardListModelSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Rewards
+        model = Reward
         fields = ["name","description"]
 
-class Team_UserListModelSerializer(serializers.ModelSerializer):
+class TeamUserListModelSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Team_User
+        model = TeamUser
         fields = ["first_name","last_name","email"]
 
 class TaskListModelSerializer(serializers.ModelSerializer):
@@ -37,17 +37,17 @@ class GoalListModelSerializer(serializers.ModelSerializer):
         model = Goal
         fields = ["name","description","deadline"]
 
-class WorkSpaceListModelSerializer(serializers.ModelSerializer):
+class WorkspaceListModelSerializer(serializers.ModelSerializer):
     class Meta:
-        model = WorkSpace
+        model = Workspace
         fields = ["name","description"]
 
-class Company_userListModelSerializer(serializers.ModelSerializer):
+class CompanyUserListModelSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Company_user
+        model = CompanyUser
         fields = ["name","email","username","rfc"]
                                         
-# class Workspace_team_userListModelSerializer(serializers.ModelSerializer):
+# class Workspace_TeamUserListModelSerializer(serializers.ModelSerializer):
 #     class Meta:
-#         model = Workspace_team_user
-#         fields = ["name","description"]                                        
+#         model = Workspace_TeamUser
+#         fields = ["name","description"]
