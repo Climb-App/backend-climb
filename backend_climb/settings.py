@@ -29,9 +29,9 @@ SECRET_KEY = os.getenv( "DJANGO_SECRET_KEY" )
 DEBUG = bool( os.getenv( "DJANGO_DEBUG", True ) ) 
 
 ALLOWED_HOSTS = ["*"]
-CORS_ORIGIN_ALLOW_ALL = True
 
-#CORS_ALLOWED_HOSTS = ["http:// URL donde esta desplegado"] 
+#CORS_ALLOWED_HOSTS = ["http:// URL donde esta desplegado"]
+CORS_ORIGIN_ALLOW_ALL = True
 
 # Application definition
 
