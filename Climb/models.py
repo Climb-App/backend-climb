@@ -1,159 +1,119 @@
 from django.db import models
 
-
 # Create your models here.
+class Role(models.Model):
+    name = models.CharField( max_length=50 )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name}"
+
+class CompanyUser(models.Model):
+    name = models.CharField( max_length=100 )
+    email = models.EmailField()
+    username = models.CharField( max_length=50 )
+    password = models.CharField( max_length=255 )
+    avatar = models.ImageField( upload_to="avatar/company_user", blank=True, null=True )
+    rfc = models.CharField( max_length=13, blank=True, null=True )
+    address = models.CharField( max_length=255, blank=True, null=True )
+    role_id = models.ForeignKey( Role, on_delete=models.CASCADE, related_name="roles" )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name}"
+
+class Reward(models.Model):
+    name = models.CharField( max_length=100 )
+    description = models.TextField()
+    icon = models.ImageField( upload_to="icon/reward", blank=True, null=True )
+    points_needed = models.IntegerField()
+    status = models.CharField( max_length=50 )
+    company_user_id = models.ForeignKey( CompanyUser, on_delete=models.CASCADE, related_name="rewards" )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name}"
 
 class Badge(models.Model):
-    """Badge."""
-    name = models.CharField(max_length=80)
-    description = models.CharField(max_length=100)
-    # Preguntar https://docs.djangoproject.com/es/3.2/topics/files/
-    icon = models.ImageField()
-    propoints_needed_min = models.IntegerField()
+    name = models.CharField( max_length=100 )
+    description = models.TextField()
+    icon = models.ImageField( upload_to="icon/badge", blank=True, null=True )
+    points_needed_min = models.IntegerField()
     points_needed_max = models.IntegerField()
-  # Relations
+    company_user_id = models.ForeignKey( CompanyUser, on_delete=models.CASCADE, related_name="badges" )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.name} {self.description}"
-
-class Role(models.Model):
-    """Role."""
-    name = models.CharField(max_length=80)
-    def __str__(self):
-      return f"{self.name}"
-
 
 class Multiplicator(models.Model):
-    """multiplicator."""
-    racha = models.IntegerField()
-    multiplicator = models.FloatField()
-# Relations
+    name = models.CharField( max_length=100 )
+    streak = models.IntegerField()
+    company_user_id = models.ForeignKey( CompanyUser, on_delete=models.CASCADE, related_name="multiplicators" )
+    created_at = models.DateTimeField(auto_now_add=True)
+
     def __str__(self):
-      return f"{self.racha} {self.multiplicator}"
+        return f"{self.name}"
 
-
-class Rewards(models.Model):
-    """Rewards."""
-    icon = models.ImageField()
-    name = models.CharField(max_length=80)
-    description = models.CharField(max_length=100)
-    points_needed = models.IntegerField()
-    status = models.CharField(max_length=100)
-  # Relations
+class Workspace(models.Model):
+    name = models.CharField( max_length=100 )
+    description = models.TextField()
+    company_user_id = models.ForeignKey( CompanyUser, on_delete=models.CASCADE, related_name="workspaces" )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.name} {self.description}"
 
+class Goal(models.Model):
+    name = models.CharField( max_length=100 )
+    description = models.TextField()
+    deadline = models.DateField( blank=True, null=True )
+    progress = models.IntegerField( default=0 )
+    workspace_id = models.ForeignKey( Workspace, on_delete=models.CASCADE, related_name="goals" )
+    created_at = models.DateTimeField(auto_now_add=True)
 
-class Team_User(models.Model):
-    """Team_User."""
-    avatar = models.ImageField()
-    first_name = models.CharField(max_length=80)
-    last_name = models.CharField(max_length=80)
+    def __str__(self):
+        return f"{self.name} {self.description}"
+
+class TeamUser(models.Model):
+    first_name = models.CharField( max_length=100 )
+    last_name = models.CharField( max_length=100 )
+    username = models.CharField( max_length=50 )
     email = models.EmailField()
-    password = models.CharField(max_length=30)
-    racha = models.IntegerField()
-    point_earned = models.IntegerField()
-    points_available = models.IntegerField()
-    workspace_id = models.IntegerField()
-  # Relations
-    role_id = models.ForeignKey(
-        Role, on_delete=models.PROTECT, related_name="Roles_TeamUser")
-    badge_id = models.ForeignKey(
-        Badge, on_delete=models.PROTECT, related_name="Badges_TeamUser")
-    multiplicator_id = models.ForeignKey(
-        Multiplicator, on_delete=models.PROTECT, related_name="Multiplicators_TeamUser")
-    rewards_id = models.ForeignKey(
-        Rewards, on_delete=models.PROTECT, related_name="Rewards_TeamUser")
+    password = models.CharField( max_length=255 )
+    avatar = models.ImageField( upload_to="avatar/team_user", blank=True, null=True )
+    points_earned = models.IntegerField( blank=True, null=True )
+    points_available = models.IntegerField( blank=True, null=True )
+    multiplicator_id = models.ForeignKey( Multiplicator, on_delete=models.CASCADE, related_name="team_users_mult", blank=True, null=True )
+    role_id = models.ForeignKey( Role, on_delete=models.CASCADE, related_name="team_users_roles" )
+    company_user_id = models.ForeignKey( CompanyUser, on_delete=models.CASCADE, related_name="team_users_companies" )
+    workspace_id = models.ManyToManyField( Workspace ) #ManyToMany
+    reward_id = models.ManyToManyField( Reward ) #ManyToMany
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
-
 class Task(models.Model):
-    """Task."""
-    name = models.CharField(max_length=80)
-    description = models.CharField(max_length=100)
-    deadline = models.DateTimeField()
     Status_TYPES = (
         ("To Do", "to do"),
         ("Done", "done"),
         ("Delay", "delay"),
         ("Refused", "refused"),
     )
-    type = models.CharField(
-        max_length=50, choices=Status_TYPES, default="To Do")
-    start_date = models.DateTimeField()
-    end_date = models.DateTimeField()
-    messages = models.CharField(max_length=255)
-    messages_refused = models.CharField(max_length=255)
-  # Relations
-    team_user_id = models.ForeignKey(
-        Team_User, on_delete=models.PROTECT, related_name="Team_users_Task")
 
-    def __str__(self):
-        return f"{self.name} {self.description}"
-
-
-class Goal(models.Model):
-    """Goal."""
-    name = models.CharField(max_length=80)
-    description = models.CharField(max_length=100)
-    deadline = models.DateTimeField()
-    progress = models.IntegerField()
-  # Relations
-    task_id = models.ForeignKey(
-        Task, on_delete=models.PROTECT, related_name="Tasks_Goal")
-
-    def __str__(self):
-        return f"{self.name} {self.description}"
-
-
-class WorkSpace(models.Model):
-    """Workspace."""
-    name = models.CharField(max_length=80)
-    description = models.CharField(max_length=100)
+    name = models.CharField( max_length=100 )
+    description = models.TextField()
+    deadline = models.DateField( blank=True, null=True )
+    points_value = models.IntegerField()
+    status = models.CharField( max_length=50, choices=Status_TYPES, default="To Do" )
+    start_date = models.DateField( auto_now=True )
+    end_date = models.DateField( blank=True, null=True )
+    message = models.TextField( blank=True, null=True )
+    message_refused = models.TextField( blank=True, null=True )
+    goal_id = models.ForeignKey( Goal, on_delete=models.CASCADE, related_name="tasks_goal", blank=True, null=True )
+    team_user_id = models.ForeignKey( TeamUser, on_delete=models.CASCADE, related_name="tasks_team_user", blank=True, null=True )
     created_at = models.DateTimeField(auto_now_add=True)
-  # Relations
-    goal_id = models.ForeignKey(
-        Goal, on_delete=models.PROTECT, related_name="Goals_Workspace")
 
     def __str__(self):
-        return f"{self.name} {self.description}"
-
-
-class Company_user(models.Model):
-    """Company_user."""
-    avatar = models.ImageField()
-    name = models.CharField(max_length=80)
-    email = models.EmailField()
-    username = models.CharField(max_length=25)
-    password = models.CharField(max_length=255)
-    rfc = models.CharField(max_length=15)
-    address = models.CharField(max_length=255)
-  # Relations
-    role_id = models.ForeignKey(
-        Role, on_delete=models.PROTECT, related_name="Roles_Company_user")
-    workspace_id = models.ForeignKey(
-        WorkSpace, on_delete=models.PROTECT, related_name="Workspaces_Company_user")
-    team_user_id = models.ForeignKey(
-        Team_User, on_delete=models.PROTECT, related_name="Team_users_Company_user")
-    rewards_id = models.ForeignKey(
-        Rewards, on_delete=models.PROTECT, related_name="Rewards_Company_user")
-    badge_id = models.ForeignKey(
-        Badge, on_delete=models.PROTECT, related_name="Badges_Company_user")
-    multiplicator_id = models.ForeignKey(
-        Multiplicator, on_delete=models.PROTECT, related_name="Multiplicators_Company_user")
-
-    def __str__(self):
-        return f"{self.name} {self.username}"
-
-
-class Workspace_team_user(models.Model):
-    """Workspace_team_user."""
-  # Relations
-    team_user_id = models.ForeignKey(
-    Team_User, on_delete=models.PROTECT, related_name="Team_users_Workspace_team_user")
-
-    def __str__(self):
-        return f"{self.name} {self.description}"
+        return f"{self.name}"

@@ -1,53 +1,145 @@
 from django.db import models
+from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Badge,Role,Multiplicator,Rewards,Team_User,Task,Goal,WorkSpace,Company_user,Workspace_team_user
+from .models import (
+    Role,
+    CompanyUser,
+    Reward,
+    Badge,
+    Multiplicator,
+    Workspace,
+    Goal,
+    TeamUser,
+    Task,
+)
 
-class BadgeListModelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Badge
-        fields = ["name","description"]
-
-class RoleListModelSerializer(serializers.ModelSerializer):
+''' Role Models Serializer '''
+class RoleListModelSerializer( serializers.ModelSerializer ):
     class Meta:
         model = Role
-        fields = ["name"]
-        
-class MultiplicatorListModelSerializer(serializers.ModelSerializer):
+        fields = [ "id", "name" ]
+
+''' Company User Models Serializer '''
+class CompanyUserListModelSerializer( serializers.ModelSerializer ):
+    class Meta:
+        model = CompanyUser
+        fields = [ "id", "name","email", "username", "password", "role_id" ]
+
+class CompanyUserModelSerializer( serializers.ModelSerializer ):
+    class Meta:
+        model = CompanyUser
+        fields = [ "id", "name", "email", "username", "password", "role_id", "rfc", "address", "avatar" ]
+
+class CompanyUserRetrieveModelSerializer( serializers.ModelSerializer ):
+    role_id = RoleListModelSerializer
+    
+    class Meta:
+        model = CompanyUser
+        fields = [ "id", "name", "email", "username", "password", "role_id", "rfc", "address", "avatar" ]
+
+''' Reward Models Serializer '''
+class RewardListModelSerializer( serializers.ModelSerializer ):
+    class Meta:
+        model = Reward
+        fields = [ "id", "name", "description", "points_needed", "status", "company_user_id" ]
+
+class RewardModelSerializer( serializers.ModelSerializer ):
+    class Meta:
+        model = Reward
+        fields = [ "id", "name", "description", "icon", "points_needed", "status", "company_user_id" ]
+
+class RewardRetrieveModelSerializer( serializers.ModelSerializer ):
+    company_user_id = CompanyUserModelSerializer
+    
+    class Meta:
+        model = Reward
+        fields = [ "id", "name", "description", "icon", "points_needed", "status", "company_user_id" ]
+
+''' Badge Models Serializer '''
+class BadgeListModelSerializer( serializers.ModelSerializer ):
+    class Meta:
+        model = Badge
+        fields = [ "id", "name", "description", "points_needed_min", "points_needed_max", "company_user_id" ]
+
+class BadgeModelSerializer( serializers.ModelSerializer ):
+    class Meta:
+        model = Badge
+        fields = [ "id", "name", "description", "icon", "points_needed_min", "points_needed_max", "company_user_id" ]
+
+class BadgeRetrieveModelSerializer( serializers.ModelSerializer ):
+    company_user_id = CompanyUserModelSerializer
+    
+    class Meta:
+        model = Badge
+        fields = [ "id", "name", "description", "icon", "points_needed_min", "points_needed_max", "company_user_id" ]
+
+''' Multiplicator '''
+class MultiplicatorListModelSerializer( serializers.ModelSerializer ):
     class Meta:
         model = Multiplicator
-        fields = ["racha","multiplicator"]
+        fields = [ "id", "name", "streak", "company_user_id" ]
 
-class RewardsListModelSerializer(serializers.ModelSerializer):
+class MultiplicatorRetrieveModelSerializer( serializers.ModelSerializer ):
+    company_user_id = CompanyUserModelSerializer
+
     class Meta:
-        model = Rewards
-        fields = ["name","description"]
+        model = Multiplicator
+        fields = [ "id", "name", "streak", "company_user_id" ]
 
-class Team_UserListModelSerializer(serializers.ModelSerializer):
+''' Workspace '''
+class WorkspaceListModelSerializer( serializers.ModelSerializer ):
     class Meta:
-        model = Team_User
-        fields = ["first_name","last_name","email"]
+        model = Workspace
+        fields = [ "id", "name", "description", "company_user_id" ]
 
-class TaskListModelSerializer(serializers.ModelSerializer):
+class WorkspaceRetrieveModelSerializer( serializers.ModelSerializer ):
+    company_user_id = CompanyUser
+    
     class Meta:
-        model = Task
-        fields = ["name","description","type"]
+        model = Workspace
+        fields = [ "id", "name", "description", "company_user_id" ]
 
-class GoalListModelSerializer(serializers.ModelSerializer):
+''' Goal'''
+class GoalListModelSerializer( serializers.ModelSerializer ):
     class Meta:
         model = Goal
-        fields = ["name","description","deadline"]
+        fields = [ "id", "name", "description", "deadline", "progress", "workspace_id" ]
 
-class WorkSpaceListModelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = WorkSpace
-        fields = ["name","description"]
+class GoalRetrieveModelSerializer( serializers.ModelSerializer ):
+    workspace_id = Workspace
 
-class Company_userListModelSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Company_user
-        fields = ["name","email","username","rfc"]
-                                        
-# class Workspace_team_userListModelSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Workspace_team_user
-#         fields = ["name","description"]                                        
+        model = Goal
+        fields = [ "id", "name", "description", "deadline", "progress", "workspace_id" ]
+
+''' TeamUser '''
+class TeamUserListModelSerializer( serializers.ModelSerializer ):
+    class Meta:
+        model = TeamUser
+        fields = [ "id", "first_name", "last_name", "username", "email", "password", "avatar", "points_earned", "multiplicator_id", "role_id", "company_user_id", "workspace_id", "reward_id" ]
+
+class TeamUserRetrieveModelSerializer( serializers.ModelSerializer ):
+    multiplicator_id = Multiplicator
+    role_id = Role
+    company_user = CompanyUser
+    workspace_id = Workspace
+    reward_id = Reward
+
+    class Meta:
+        model = TeamUser
+        fields = [ "id", "first_name", "last_name", "username", "email", "password", "avatar", "points_earned", "multiplicator_id", "role_id", "company_user_id", "workspace_id", "reward_id" ]
+
+''' Task '''
+class TaskListModelSerializer( serializers.ModelSerializer ):
+    class Meta:
+        model = Task
+        fields = [ "id", "name", "description", "deadline", "points_value", "status", "start_date", "end_date", "goal_id", "team_user_id" ]
+
+class TaskRetrieveModelSerializer( serializers.ModelSerializer ):
+    goal_id = Goal
+    team_user_id = TeamUser
+
+    class Meta:
+        model = Task
+        fields = [ "id", "name", "description", "deadline", "points_value", "status", "start_date", "end_date", "goal_id", "team_user_id" ]
+
