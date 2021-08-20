@@ -153,7 +153,7 @@ class Workspace_team_user(models.Model):
     """Workspace_team_user."""
   # Relations
     team_user_id = models.ForeignKey(
-        Team_User, on_delete=models.PROTECT, related_name="Team_users_Workspace_team_user")
+    Team_User, on_delete=models.PROTECT, related_name="Team_users_Workspace_team_user")
 
     def __str__(self):
         return f"{self.name} {self.description}"
