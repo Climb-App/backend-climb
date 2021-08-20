@@ -8,31 +8,60 @@ from .permissions import OnlyAdminCanCreate
 
 # Serializers
 from .serializers import (
+    # Role
     RoleListModelSerializer,
-    BadgeListModelSerializer,
-    MultiplicatorListModelSerializer,
-    RewardListModelSerializer,
-    TeamUserListModelSerializer,
-    TaskListModelSerializer,
-    GoalListModelSerializer,
-    WorkspaceListModelSerializer,
+
+    # CompanyUser
     CompanyUserListModelSerializer,
+    CompanyUserModelSerializer,
+    CompanyUserRetrieveModelSerializer,
+
+    # Reward
+    RewardListModelSerializer,
+    RewardModelSerializer,
+    RewardRetrieveModelSerializer,
+
+    # Badge
+    BadgeListModelSerializer,
+    BadgeModelSerializer,
+
+    # Multiplicator
+    MultiplicatorListModelSerializer,
+    MultiplicatorRetrieveModelSerializer,
+
+    # Workspace
+    WorkspaceListModelSerializer,
+    WorkspaceRetrieveModelSerializer,
+
+    # Goal
+    GoalListModelSerializer,
+    GoalRetrieveModelSerializer,
+
+    # TeamUser
+    TeamUserListModelSerializer,
+    TeamUserRetrieveModelSerializer,
+
+    # Task
+    TaskListModelSerializer,
+    TaskRetrieveModelSerializer,
 )
 
 # Models
 from .models import (
     Role,
+    CompanyUser,
+    Reward,
     Badge,
     Multiplicator,
-    Reward,
+    Workspace,
+    Goal,
     TeamUser,
     Task,
-    Goal,
-    Workspace,
-    CompanyUser,
 )
 
-# # Create your views here.
+# Create your views here.
+
+''' Role Views '''
 class RoleListCreateAPIView( generics.ListCreateAPIView ):
     queryset = Role.objects.all()
     serializer_class = RoleListModelSerializer
@@ -44,51 +73,76 @@ class RoleListCreateAPIView( generics.ListCreateAPIView ):
 
         return serializer_class
 
-
-
-class BadgeRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
-
-    queryset = Badge.objects.all()
-    serializer_class = BadgeListModelSerializer
-
-
-class RoleRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
-
+class RoleRetrieveUpdateDestroyAPIVIew( generics.RetrieveUpdateDestroyAPIView ):
     queryset = Role.objects.all()
     serializer_class = RoleListModelSerializer
 
+''' CompanyUser Views '''
+class CompanyUserListCreateAPIView( generics.ListCreateAPIView ):
+    queryset = CompanyUser.objects.all()
+    serializer_class = CompanyUserListModelSerializer
 
-class MultiplicatorRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    def get_serializer_class(self):
+        serializer_class = self.serializer_class
+        if self.request.method == "POST":
+            serializer_class = CompanyUserModelSerializer
 
-    queryset = Multiplicator.objects.all()
-    serializer_class = MultiplicatorListModelSerializer
+        return serializer_class
 
+class CompanyUserRetrieveUpdateDestroyAPIView( generics.RetrieveUpdateDestroyAPIView ):
+    queryset = CompanyUser.objects.all()
+    serializer_class = CompanyUserRetrieveModelSerializer
 
-class RewardsRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
-
+''' Reward Views '''
+class RewardListCreateAPIView( generics.ListCreateAPIView ):
     queryset = Reward.objects.all()
     serializer_class = RewardListModelSerializer
 
+    def get_serializer_class(self):
+        serializer_class = self.serializer_class
+        if self.request.method == "POST":
+            serializer_class = RewardModelSerializer
 
-class TeamUserRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+        return serializer_class
 
-    queryset = TeamUser.objects.all()
-    serializer_class = TeamUserListModelSerializer
+class RewardsRetrieveUpdateDestroyAPIView( generics.RetrieveUpdateDestroyAPIView ):
+    queryset = Reward.objects.all()
+    serializer_class = RewardRetrieveModelSerializer
 
+''' Badge Views '''
+class BadgeListCreateAPIView( generics.ListCreateAPIView ):
+    queryset = Badge.objects.all()
+    serializer_class = BadgeListModelSerializer
 
-class TaskRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    def get_serializer_class(self):
+        serializer_class = self.serializer_class
+        if self.request.method == "POST":
+            serializer_class = BadgeModelSerializer
 
-    queryset = Task.objects.all()
-    serializer_class = TaskListModelSerializer
+        return serializer_class
 
+class BadgeRetrieveUpdateDestroyAPIView( generics.RetrieveUpdateDestroyAPIView ):
+    queryset = Badge.objects.all()
+    serializer_class = BadgeListModelSerializer
 
-class GoalRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+''' Multiplicator '''
+class MultiplicatorListCreateAPIView( generics.ListCreateAPIView ):
+    queryset = Multiplicator.objects.all()
+    serializer_class = MultiplicatorListModelSerializer
 
-    queryset = Goal.objects.all()
-    serializer_class = GoalListModelSerializer
+    def get_serializer_class(self):
+        serializer_class = self.serializer_class
+        if self.request.method == "POST":
+            serializer_class = MultiplicatorListModelSerializer
 
+        return serializer_class
 
-class WorskSpaceListCreateAPIView(generics.ListCreateAPIView):
+class MultiplicatorRetrieveUpdateDestroyAPIView( generics.RetrieveUpdateDestroyAPIView ):
+    queryset = Multiplicator.objects.all()
+    serializer_class = MultiplicatorRetrieveModelSerializer
+
+''' Workspace '''
+class WorskSpaceListCreateAPIView( generics.ListCreateAPIView ):
     queryset = Workspace.objects.all()
     serializer_class = WorkspaceListModelSerializer
 
@@ -99,27 +153,54 @@ class WorskSpaceListCreateAPIView(generics.ListCreateAPIView):
 
         return serializer_class
 
-class WorkSpaceRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
-
+class WorkSpaceRetrieveUpdateDestroyAPIView( generics.RetrieveUpdateDestroyAPIView ):
     queryset = Workspace.objects.all()
-    serializer_class = WorkspaceListModelSerializer
-    permission_classes = [IsAuthenticated, OnlyAdminCanCreate]
-    # authentication_classes=[TokenAuthentication]
-    # sin ponerlo en settings e importando desde aqui pero son diferentes formas de autenticarte
+    serializer_class = WorkspaceRetrieveModelSerializer
 
-
-class CompanyUserRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
-
-    queryset = CompanyUser.objects.all()
-    serializer_class = CompanyUserListModelSerializer
-
-class CompanyUserListCreateAPIView( generics.ListCreateAPIView ):
-    queryset = CompanyUser.objects.all()
-    serializer_class = CompanyUserListModelSerializer
+''' Goal '''
+class GoalListCreateAPIView( generics.ListCreateAPIView ):
+    queryset = Goal.objects.all()
+    serializer_class = GoalListModelSerializer
 
     def get_serializer_class(self):
         serializer_class = self.serializer_class
         if self.request.method == "POST":
-            serializer_class = CompanyUserListModelSerializer
+            serializer_class = GoalListModelSerializer
 
         return serializer_class
+
+class GoalRetrieveUpdateDestroyAPIView( generics.RetrieveUpdateDestroyAPIView ):
+    queryset = Goal.objects.all()
+    serializer_class = GoalRetrieveModelSerializer
+
+''' TeamUser '''
+class TeamUserListCreateAPIView( generics.ListCreateAPIView ):
+    queryset = TeamUser.objects.all()
+    serializer_class = TeamUserListModelSerializer
+
+def get_serializer_class(self):
+        serializer_class = self.serializer_class
+        if self.request.method == "POST":
+            serializer_class = TeamUserListModelSerializer
+
+        return serializer_class
+
+class TeamUserRetrieveUpdateDestroyAPIView( generics.RetrieveUpdateDestroyAPIView ):
+    queryset = TeamUser.objects.all()
+    serializer_class = TeamUserRetrieveModelSerializer
+
+'''Task'''
+class TaskListCreateAPIView( generics.ListCreateAPIView ):
+    queryset = Task.objects.all()
+    serializer_class = TaskListModelSerializer
+
+def get_serializer_class(self):
+        serializer_class = self.serializer_class
+        if self.request.method == "POST":
+            serializer_class = TaskListModelSerializer
+
+        return serializer_class
+
+class TaskRetrieveUpdateDestroyAPIView( generics.RetrieveUpdateDestroyAPIView ):
+    queryset = Task.objects.all()
+    serializer_class = TaskRetrieveModelSerializer
