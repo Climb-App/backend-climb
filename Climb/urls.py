@@ -32,11 +32,11 @@ from .views import (
 
     # TeamUser
     TeamUserListCreateAPIView,
-    TeamUserRetrieveUpdateDestroyAPIView,
+    # TeamUserRetrieveUpdateDestroyAPIView,
 
     # Task
-    TaskListCreateAPIView,
-    TaskRetrieveUpdateDestroyAPIView,
+    # TaskListCreateAPIView,
+    # TaskRetrieveUpdateDestroyAPIView,
 )
 
 urlpatterns = [
@@ -76,9 +76,9 @@ urlpatterns = [
 
     # TeamUser
     path( "team_users/", TeamUserListCreateAPIView.as_view(), name="team_user-list-create" ),
-    path( "team_users/<int:pk>", TeamUserRetrieveUpdateDestroyAPIView.as_view(), name="team_user-retrieve-update-destroy" ),
+    # path( "team_users/<int:pk>", TeamUserRetrieveUpdateDestroyAPIView.as_view(), name="team_user-retrieve-update-destroy" ),
 
     # Task
-    path( "tasks/", TaskListCreateAPIView.as_view(), name="team_user-list-create" ),
-    path( "tasks/<int:pk>", TaskRetrieveUpdateDestroyAPIView.as_view(), name="team_user-retrieve-update-destroy" ),
+    # path( "tasks/", TaskListCreateAPIView.as_view(), name="team_user-list-create" ),
+    # path( "tasks/<int:pk>", TaskRetrieveUpdateDestroyAPIView.as_view(), name="team_user-retrieve-update-destroy" ),
 ]

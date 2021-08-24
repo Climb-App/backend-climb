@@ -39,11 +39,11 @@ from .serializers import (
 
     # TeamUser
     TeamUserListModelSerializer,
-    TeamUserRetrieveModelSerializer,
+    # TeamUserRetrieveModelSerializer,
 
     # Task
-    TaskListModelSerializer,
-    TaskRetrieveModelSerializer,
+    # TaskListModelSerializer,
+    # TaskRetrieveModelSerializer,
 )
 
 # Models
@@ -185,22 +185,3 @@ def get_serializer_class(self):
 
         return serializer_class
 
-class TeamUserRetrieveUpdateDestroyAPIView( generics.RetrieveUpdateDestroyAPIView ):
-    queryset = TeamUser.objects.all()
-    serializer_class = TeamUserRetrieveModelSerializer
-
-'''Task'''
-class TaskListCreateAPIView( generics.ListCreateAPIView ):
-    queryset = Task.objects.all()
-    serializer_class = TaskListModelSerializer
-
-def get_serializer_class(self):
-        serializer_class = self.serializer_class
-        if self.request.method == "POST":
-            serializer_class = TaskListModelSerializer
-
-        return serializer_class
-
-class TaskRetrieveUpdateDestroyAPIView( generics.RetrieveUpdateDestroyAPIView ):
-    queryset = Task.objects.all()
-    serializer_class = TaskRetrieveModelSerializer
