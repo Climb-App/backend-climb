@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import Badge,Role,Multiplicator,Reward,TeamUser,Task,Goal,Workspace,CompanyUser
 from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
 
 
 
@@ -93,8 +94,9 @@ class WorkspaceListModelSerializer( serializers.ModelSerializer ):
         model = Workspace
         fields = '__all__'
 
-class UserListModelSerializer (serializers.ModelSerializer):
 
+class UserListModelSerializer (serializers.ModelSerializer):
+  
     class Meta:
         model = User
         fields = ["first_name","last_name","email","username","password"]      
@@ -104,12 +106,16 @@ class RoleListModelSerializer( serializers.ModelSerializer ):
         model = Role
         fields = [ "name" ]     
 
+
 class CompanyUserListModelSerializer(serializers.ModelSerializer):
     user=UserListModelSerializer()
     role=RoleListModelSerializer()
+    
     class Meta:
         model = CompanyUser
         fields = ["user","rfc","avatar","address","role"]
+
+
 
 class TeamUserListModelSerializer(serializers.ModelSerializer):
     user=UserListModelSerializer()
