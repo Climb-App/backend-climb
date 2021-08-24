@@ -123,3 +123,4 @@ class CompanyUserListCreateAPIView( generics.ListCreateAPIView ):
             serializer_class = CompanyUserListModelSerializer
 
         return serializer_class
+

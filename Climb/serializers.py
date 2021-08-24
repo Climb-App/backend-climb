@@ -1,11 +1,9 @@
 from django.db import models
 from rest_framework import serializers
 from .models import Badge,Role,Multiplicator,Reward,TeamUser,Task,Goal,Workspace,CompanyUser
+from django.contrib.auth.models import User
 
-class RoleListModelSerializer( serializers.ModelSerializer ):
-    class Meta:
-        model = Role
-        fields = [ "name" ]
+
 
 class BadgeListModelSerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,10 +20,7 @@ class RewardListModelSerializer(serializers.ModelSerializer):
         model = Reward
         fields = ["name","description"]
 
-class TeamUserListModelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TeamUser
-        fields = ["first_name","last_name","email"]
+
 
 class TaskListModelSerializer(serializers.ModelSerializer):
     class Meta:
@@ -42,10 +37,34 @@ class WorkspaceListModelSerializer(serializers.ModelSerializer):
         model = Workspace
         fields = ["name","description"]
 
+class UserListModelSerializer (serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ["first_name","last_name","email","username","password","token"]      
+ 
+class RoleListModelSerializer( serializers.ModelSerializer ):
+    class Meta:
+        model = Role
+        fields = [ "name" ]     
+
 class CompanyUserListModelSerializer(serializers.ModelSerializer):
+    user=UserListModelSerializer()
+    role=RoleListModelSerializer()
     class Meta:
         model = CompanyUser
-        fields = ["name","email","username","rfc"]
+        fields = ["user","rfc","avatar","address","role"]
+
+class TeamUserListModelSerializer(serializers.ModelSerializer):
+    user=UserListModelSerializer()
+    role=RoleListModelSerializer()
+    class Meta:
+        model = TeamUser
+        fields = ["user","avatar","points_earned","points_available","multiplicator","role","company_user","workspace","reward"]
+
+
+ 
+
                                         
 # class Workspace_TeamUserListModelSerializer(serializers.ModelSerializer):
 #     class Meta:
