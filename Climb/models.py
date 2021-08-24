@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Role(models.Model):
@@ -9,18 +10,17 @@ class Role(models.Model):
         return f"{self.name}"
 
 class CompanyUser(models.Model):
-    name = models.CharField( max_length=100 )
-    email = models.EmailField()
-    username = models.CharField( max_length=50 )
-    password = models.CharField( max_length=255 )
-    avatar = models.ImageField( upload_to="avatar/company_user", blank=True, null=True )
+    user= models.OneToOneField(to=User,on_delete=models.CASCADE,related_name='companies')
+    avatar = models.ImageField( upload_to="avatar/company_user", blank=True )
     rfc = models.CharField( max_length=13, blank=True, null=True )
-    address = models.CharField( max_length=255, blank=True, null=True )
-    role_id = models.ForeignKey( Role, on_delete=models.CASCADE, related_name="roles" )
+    address = models.CharField( max_length=255 )
+    role = models.ForeignKey( Role, on_delete=models.CASCADE, related_name="roles" )
     created_at = models.DateTimeField(auto_now_add=True)
 
+    #Relations
+
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.user.username}"
 
 class Reward(models.Model):
     name = models.CharField( max_length=100 )
@@ -28,7 +28,7 @@ class Reward(models.Model):
     icon = models.ImageField( upload_to="icon/reward", blank=True, null=True )
     points_needed = models.IntegerField()
     status = models.CharField( max_length=50 )
-    company_user_id = models.ForeignKey( CompanyUser, on_delete=models.CASCADE, related_name="rewards" )
+    company_user = models.ForeignKey( CompanyUser, on_delete=models.CASCADE, related_name="rewards" )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -40,7 +40,7 @@ class Badge(models.Model):
     icon = models.ImageField( upload_to="icon/badge", blank=True, null=True )
     points_needed_min = models.IntegerField()
     points_needed_max = models.IntegerField()
-    company_user_id = models.ForeignKey( CompanyUser, on_delete=models.CASCADE, related_name="badges" )
+    company_user = models.ForeignKey( CompanyUser, on_delete=models.CASCADE, related_name="badges" )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -49,7 +49,7 @@ class Badge(models.Model):
 class Multiplicator(models.Model):
     name = models.CharField( max_length=100 )
     streak = models.IntegerField()
-    company_user_id = models.ForeignKey( CompanyUser, on_delete=models.CASCADE, related_name="multiplicators" )
+    company_user = models.ForeignKey( CompanyUser, on_delete=models.CASCADE, related_name="multiplicators" )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -58,7 +58,7 @@ class Multiplicator(models.Model):
 class Workspace(models.Model):
     name = models.CharField( max_length=100 )
     description = models.TextField()
-    company_user_id = models.ForeignKey( CompanyUser, on_delete=models.CASCADE, related_name="workspaces" )
+    company_user = models.ForeignKey( CompanyUser, on_delete=models.CASCADE, related_name="workspaces" )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -67,28 +67,24 @@ class Workspace(models.Model):
 class Goal(models.Model):
     name = models.CharField( max_length=100 )
     description = models.TextField()
-    deadline = models.DateField( blank=True, null=True )
-    progress = models.IntegerField( default=0 )
-    workspace_id = models.ForeignKey( Workspace, on_delete=models.CASCADE, related_name="goals" )
+    deadline = models.DateField()
+    progress = models.IntegerField()
+    workspace = models.ForeignKey( Workspace, on_delete=models.CASCADE, related_name="goals" )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.name} {self.description}"
 
 class TeamUser(models.Model):
-    first_name = models.CharField( max_length=100 )
-    last_name = models.CharField( max_length=100 )
-    username = models.CharField( max_length=50 )
-    email = models.EmailField()
-    password = models.CharField( max_length=255 )
-    avatar = models.ImageField( upload_to="avatar/team_user", blank=True, null=True )
-    points_earned = models.IntegerField( blank=True, null=True )
-    points_available = models.IntegerField( blank=True, null=True )
-    multiplicator_id = models.ForeignKey( Multiplicator, on_delete=models.CASCADE, related_name="team_users_mult", blank=True, null=True )
-    role_id = models.ForeignKey( Role, on_delete=models.CASCADE, related_name="team_users_roles" )
-    company_user_id = models.ForeignKey( CompanyUser, on_delete=models.CASCADE, related_name="team_users_companies" )
-    workspace_id = models.ManyToManyField( Workspace ) #ManyToMany
-    reward_id = models.ManyToManyField( Reward ) #ManyToMany
+    user= models.OneToOneField(to=User,on_delete=models.CASCADE,related_name='teamUsers')
+    avatar = models.ImageField( upload_to="avatar/team_user", blank=True )
+    points_earned = models.IntegerField()
+    points_available = models.IntegerField()
+    multiplicator = models.ForeignKey( Multiplicator, on_delete=models.CASCADE, related_name="team_users_mult" )
+    role = models.ForeignKey( Role, on_delete=models.CASCADE, related_name="team_users_roles" )
+    company_user = models.ForeignKey( CompanyUser, on_delete=models.CASCADE, related_name="team_users_companies" )
+    workspace = models.ManyToManyField( Workspace ) #ManyToMany
+    reward = models.ManyToManyField( Reward ) #ManyToMany
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -107,12 +103,12 @@ class Task(models.Model):
     deadline = models.DateField( blank=True, null=True )
     points_value = models.IntegerField()
     status = models.CharField( max_length=50, choices=Status_TYPES, default="To Do" )
-    start_date = models.DateField( auto_now=True )
-    end_date = models.DateField( blank=True, null=True )
-    message = models.TextField( blank=True, null=True )
-    message_refused = models.TextField( blank=True, null=True )
-    goal_id = models.ForeignKey( Goal, on_delete=models.CASCADE, related_name="tasks_goal", blank=True, null=True )
-    team_user_id = models.ForeignKey( TeamUser, on_delete=models.CASCADE, related_name="tasks_team_user", blank=True, null=True )
+    start_date = models.DateField()
+    end_date = models.DateField()
+    message = models.TextField()
+    message_refused = models.TextField()
+    goal = models.ForeignKey( Goal, on_delete=models.CASCADE, related_name="tasks_goal" )
+    team_user = models.ForeignKey( TeamUser, on_delete=models.CASCADE, related_name="tasks_team_user" )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
