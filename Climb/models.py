@@ -1,20 +1,40 @@
 from django.db import models
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+from django.db import models
+from django.contrib.auth.models import AbstractUser
 
-# Create your models here.
+# # Create your models here.
+
 class Role(models.Model):
-    name = models.CharField( max_length=50 )
+    role_TYPES = (
+        ("Admin", "admin"),
+        ("Member", "member"),
+        ("Leader", "leader"),
+    )
+
+    name = models.CharField( max_length=50, choices=role_TYPES, default="Member"  )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.name}"
+
+class User(AbstractUser):
+    role = models.ForeignKey( Role, on_delete=models.CASCADE, related_name="team_users_roles" )
+    name = models.CharField(blank=True, max_length=255)
+    email = models.EmailField(blank=True, max_length=255, unique=True)
+    password = models.CharField(max_length=255)
+    username = None
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
 
 class CompanyUser(models.Model):
     user= models.OneToOneField(to=User,on_delete=models.CASCADE,related_name='companies')
     avatar = models.ImageField( upload_to="avatar/company_user", blank=True )
     rfc = models.CharField( max_length=13, blank=True, null=True )
     address = models.CharField( max_length=255 )
-    role = models.ForeignKey( Role, on_delete=models.CASCADE, related_name="roles" )
+    # role = models.ForeignKey( Role, on_delete=models.CASCADE, related_name="roles" )
     created_at = models.DateTimeField(auto_now_add=True)
 
     #Relations
@@ -80,8 +100,7 @@ class TeamUser(models.Model):
     avatar = models.ImageField( upload_to="avatar/team_user", blank=True )
     points_earned = models.IntegerField()
     points_available = models.IntegerField()
-    multiplicator = models.ForeignKey( Multiplicator, on_delete=models.CASCADE, related_name="team_users_mult" )
-    role = models.ForeignKey( Role, on_delete=models.CASCADE, related_name="team_users_roles" )
+    # role = models.ForeignKey( Role, on_delete=models.CASCADE, related_name="team_users_roles" )
     company_user = models.ForeignKey( CompanyUser, on_delete=models.CASCADE, related_name="team_users_companies" )
     workspace = models.ManyToManyField( Workspace ) #ManyToMany
     reward = models.ManyToManyField( Reward ) #ManyToMany

@@ -37,14 +37,26 @@ from .views import (
     # Task
     # TaskListCreateAPIView,
     # TaskRetrieveUpdateDestroyAPIView,
+    RegisterView,
+    LoginView,
+    UserView,
+    LogoutView,
 )
 
 urlpatterns = [
     # SignUp
     # path( "users/", CompanyUserRetrieveUpdateDestroyAPIView.as_view(), name="sign_up" ),
+    path('register/', RegisterView.as_view(), name = 'register'),
     
     # Login
-    path("token-auth/", authtoken_views.obtain_auth_token, name="token-auth"),
+    # path("token-auth/", authtoken_views.obtain_auth_token, name="token-auth"),
+    path('login/', LoginView.as_view(), name = 'login'),
+
+    # Get User
+    path('user/', UserView.as_view(), name = 'users'),
+
+    # Logout
+    path('logout/', LogoutView.as_view(), name = 'logout'),
 
     # Role
     path( "roles/", RoleListCreateAPIView.as_view(), name="role-list-create" ),

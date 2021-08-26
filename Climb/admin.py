@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Badge,Role,Multiplicator,Reward,TeamUser,Task,Goal,Workspace,CompanyUser
+from .models import Badge,Role,Multiplicator,Reward,TeamUser,Task,Goal,Workspace,CompanyUser, User
 # Register your models here.
 
 admin.site.register(Badge)
@@ -11,3 +11,4 @@ admin.site.register(Task)
 admin.site.register(Goal)
 admin.site.register(Workspace)
 admin.site.register(CompanyUser)
+admin.site.register(User)

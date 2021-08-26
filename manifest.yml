@@ -1,0 +1,5 @@
+applications:
+- name: Climb-App-BackEnd
+  memory: 64M
+  buildpack: python_buildpack
+  random-route: false

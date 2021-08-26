@@ -1,13 +1,13 @@
 from django.db import models
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import Badge,Role,Multiplicator,Reward,TeamUser,Task,Goal,Workspace,CompanyUser
-from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
+from .models import User
 
 
 
-''' Company User Models Serializer '''
+# ''' Company User Models Serializer '''
 # class CompanyUserListModelSerializer( serializers.ModelSerializer ):
 #     class Meta:
 #         model = CompanyUser
@@ -138,3 +138,29 @@ class CompanyUserRetrieveModelSerializer( serializers.ModelSerializer ):
 #     class Meta:
 #         model = Workspace_TeamUser
 #         fields = ["name","description"]
+
+
+####### Vic
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'name',
+            'email',
+            'password', 
+            'role',
+            'is_superuser',
+            'is_staff',
+        ]
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }
+
+    def create(self, validated_data):
+        password = validated_data.pop('password', None)
+        instance = self.Meta.model(**validated_data)
+        if password is not None:
+            instance.set_password(password)
+        instance.save()
+        return instance
