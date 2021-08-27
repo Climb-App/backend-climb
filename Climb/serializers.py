@@ -16,7 +16,7 @@ from .models import User
 class CompanyUserModelSerializer( serializers.ModelSerializer ):
     class Meta:
         model = CompanyUser
-        fields = ["user","rfc","avatar","address","role"]
+        fields = ["user","rfc","avatar","address"]
 
 
 ''' Reward Models Serializer '''
