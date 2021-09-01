@@ -31,10 +31,10 @@ class User(AbstractUser):
 
 class CompanyUser(models.Model):
     user= models.OneToOneField(to=User,on_delete=models.CASCADE,related_name='companies')
-    avatar = models.ImageField( upload_to="avatar/company_user", blank=True )
+    avatar = models.CharField(max_length=500 , blank=True )
     rfc = models.CharField( max_length=13, blank=True, null=True )
     address = models.CharField( max_length=255 )
-    # role = models.ForeignKey( Role, on_delete=models.CASCADE, related_name="roles" )
+    role = models.ForeignKey( Role, on_delete=models.CASCADE, related_name="roles",null=True )
     created_at = models.DateTimeField(auto_now_add=True)
 
     #Relations
@@ -45,7 +45,7 @@ class CompanyUser(models.Model):
 class Reward(models.Model):
     name = models.CharField( max_length=100 )
     description = models.TextField()
-    icon = models.ImageField( upload_to="icon/reward", blank=True, null=True )
+    icon = models.CharField(max_length=500,blank=True, null=True )
     points_needed = models.IntegerField()
     status = models.CharField(blank=True, max_length=50 )
     company_user = models.ForeignKey( CompanyUser, on_delete=models.CASCADE, related_name="rewards" )

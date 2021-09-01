@@ -126,6 +126,7 @@ class TeamUserListModelSerializer(serializers.ModelSerializer):
 
 class CompanyUserRetrieveModelSerializer( serializers.ModelSerializer ):
     role = RoleListModelSerializer()
+    user=UserListModelSerializer()
     
     class Meta:
         model = CompanyUser
