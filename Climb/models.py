@@ -47,7 +47,7 @@ class Reward(models.Model):
     description = models.TextField()
     icon = models.ImageField( upload_to="icon/reward", blank=True, null=True )
     points_needed = models.IntegerField()
-    status = models.CharField( max_length=50 )
+    status = models.CharField(blank=True, max_length=50 )
     company_user = models.ForeignKey( CompanyUser, on_delete=models.CASCADE, related_name="rewards" )
     created_at = models.DateTimeField(auto_now_add=True)
 
