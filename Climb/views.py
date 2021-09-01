@@ -13,45 +13,23 @@ from .permissions import OnlyAdminCanCreate
 
 # Serializers
 from .serializers import (
-    # Users
+    # User
     UserSerializer,
 
-    # Role
-    RoleListModelSerializer,
-
-    # CompanyUser
-    CompanyUserListModelSerializer,
-    CompanyUserModelSerializer,
-    CompanyUserRetrieveModelSerializer,
+    # Workspace
+    WorkspacesSerializer,
 
     # Reward
-    RewardListModelSerializer,
-    RewardModelSerializer,
-    RewardRetrieveModelSerializer,
-
-    # Badge
-    BadgeListModelSerializer,
-    BadgeModelSerializer,
+    RewardSerializar,
 
     # Multiplicator
-    MultiplicatorListModelSerializer,
-    MultiplicatorRetrieveModelSerializer,
+    MultiplicatorSerializar,
 
-    # Workspace
-    WorkspaceListModelSerializer,
-    WorkspaceRetrieveModelSerializer,
-
-    # Goal
-    GoalListModelSerializer,
-    GoalRetrieveModelSerializer,
+    # Badge
+    BadgeSerializar,
 
     # TeamUser
-    TeamUserListModelSerializer,
-    # TeamUserRetrieveModelSerializer,
-
-    # Task
-    # TaskListModelSerializer,
-    # TaskRetrieveModelSerializer,
+    TeamUserSerializar,
 )
 
 # Models
@@ -138,131 +116,97 @@ class LogoutView(APIView):
 
         return response
 
+''' Workspace '''
+class WorkspaceView( APIView ): 
+    def get(self, request):
+        token = request.COOKIES.get('token')
 
-# Create your views here.
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
 
-''' Role Views '''
-class RoleListCreateAPIView( generics.ListCreateAPIView ):
-    queryset = Role.objects.all()
-    serializer_class = RoleListModelSerializer
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
 
-    def get_serializer_class(self):
-        serializer_class = self.serializer_class
-        if self.request.method == "POST":
-            serializer_class = RoleListModelSerializer
+        workspaces = Workspace.objects.filter(company_user=payload['id']).first()
 
-        return serializer_class
+        serializer = WorkspacesSerializer(workspaces)
 
-class RoleRetrieveUpdateDestroyAPIVIew( generics.RetrieveUpdateDestroyAPIView ):
-    queryset = Role.objects.all()
-    serializer_class = RoleListModelSerializer
+        return Response(serializer.data)
 
-''' CompanyUser Views '''
-class CompanyUserListCreateAPIView( generics.ListCreateAPIView ):
-    queryset = CompanyUser.objects.all()
-    serializer_class = CompanyUserListModelSerializer
+''' Reward '''
+class RewardView( APIView ):
+    def get(self, request):
+        token = request.COOKIES.get('token')
 
-    def get_serializer_class(self):
-        serializer_class = self.serializer_class
-        if self.request.method == "POST":
-            serializer_class = CompanyUserModelSerializer
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
 
-        return serializer_class
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
 
-class CompanyUserRetrieveUpdateDestroyAPIView( generics.RetrieveUpdateDestroyAPIView ):
-    queryset = CompanyUser.objects.all()
-    serializer_class = CompanyUserRetrieveModelSerializer
+        rewards = Reward.objects.filter(company_user=payload['id']).first()
 
-''' Reward Views '''
-class RewardListCreateAPIView( generics.ListCreateAPIView ):
-    queryset = Reward.objects.all()
-    serializer_class = RewardListModelSerializer
+        serializer = RewardSerializar(rewards)
 
-    def get_serializer_class(self):
-        serializer_class = self.serializer_class
-        if self.request.method == "POST":
-            serializer_class = RewardModelSerializer
+        return Response(serializer.data)
 
-        return serializer_class
+''' Badge '''
+class BadgeView( APIView ):
+    def get(self, request):
+        token = request.COOKIES.get('token')
 
-class RewardsRetrieveUpdateDestroyAPIView( generics.RetrieveUpdateDestroyAPIView ):
-    queryset = Reward.objects.all()
-    serializer_class = RewardRetrieveModelSerializer
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
 
-''' Badge Views '''
-class BadgeListCreateAPIView( generics.ListCreateAPIView ):
-    queryset = Badge.objects.all()
-    serializer_class = BadgeListModelSerializer
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
 
-    def get_serializer_class(self):
-        serializer_class = self.serializer_class
-        if self.request.method == "POST":
-            serializer_class = BadgeModelSerializer
+        badges = Badge.objects.filter(company_user=payload['id']).first()
 
-        return serializer_class
+        serializer = BadgeSerializar(badges)
 
-class BadgeRetrieveUpdateDestroyAPIView( generics.RetrieveUpdateDestroyAPIView ):
-    queryset = Badge.objects.all()
-    serializer_class = BadgeListModelSerializer
+        return Response(serializer.data)
 
 ''' Multiplicator '''
-class MultiplicatorListCreateAPIView( generics.ListCreateAPIView ):
-    queryset = Multiplicator.objects.all()
-    serializer_class = MultiplicatorListModelSerializer
+class MultiplicatorView( APIView ):
+    def get(self, request):
+        token = request.COOKIES.get('token')
 
-    def get_serializer_class(self):
-        serializer_class = self.serializer_class
-        if self.request.method == "POST":
-            serializer_class = MultiplicatorListModelSerializer
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
 
-        return serializer_class
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
 
-class MultiplicatorRetrieveUpdateDestroyAPIView( generics.RetrieveUpdateDestroyAPIView ):
-    queryset = Multiplicator.objects.all()
-    serializer_class = MultiplicatorRetrieveModelSerializer
+        multiplicators = Multiplicator.objects.filter(company_user=payload['id']).first()
 
-''' Workspace '''
-class WorskSpaceListCreateAPIView( generics.ListCreateAPIView ):
-    queryset = Workspace.objects.all()
-    serializer_class = WorkspaceListModelSerializer
+        serializer = MultiplicatorSerializar(multiplicators)
 
-    def get_serializer_class(self):
-        serializer_class = self.serializer_class
-        if self.request.method == "POST":
-            serializer_class = WorkspaceListModelSerializer
-
-        return serializer_class
-
-
-class WorkSpaceRetrieveUpdateDestroyAPIView( generics.RetrieveUpdateDestroyAPIView ):
-    queryset = Workspace.objects.all()
-    serializer_class = WorkspaceRetrieveModelSerializer
-
-''' Goal '''
-class GoalListCreateAPIView( generics.ListCreateAPIView ):
-    queryset = Goal.objects.all()
-    serializer_class = GoalListModelSerializer
-
-    def get_serializer_class(self):
-        serializer_class = self.serializer_class
-        if self.request.method == "POST":
-            serializer_class = GoalListModelSerializer
-
-        return serializer_class
-
-class GoalRetrieveUpdateDestroyAPIView( generics.RetrieveUpdateDestroyAPIView ):
-    queryset = Goal.objects.all()
-    serializer_class = GoalRetrieveModelSerializer
+        return Response(serializer.data)
 
 ''' TeamUser '''
-class TeamUserListCreateAPIView( generics.ListCreateAPIView ):
-    queryset = TeamUser.objects.all()
-    serializer_class = TeamUserListModelSerializer
+class TeamUserView( APIView ):
+    def get(self, request):
+        token = request.COOKIES.get('token')
 
-def get_serializer_class(self):
-        serializer_class = self.serializer_class
-        if self.request.method == "POST":
-            serializer_class = TeamUserListModelSerializer
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
 
-        return serializer_class
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
 
+        team_users = TeamUser.objects.filter(company_user=payload['id']).first()
+
+        serializer = TeamUserSerializar(team_users)
+
+        return Response(serializer.data)

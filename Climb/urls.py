@@ -1,55 +1,33 @@
-from Climb.views import RoleListCreateAPIView
 from django.urls import path
 from rest_framework.authtoken import views as authtoken_views
 from .views import (
-    # Role
-    RoleListCreateAPIView,
-    RoleRetrieveUpdateDestroyAPIVIew,
-
-    # CompanyUser
-    CompanyUserListCreateAPIView,
-    CompanyUserRetrieveUpdateDestroyAPIView,
-
-    # Reward
-    RewardListCreateAPIView,
-    RewardsRetrieveUpdateDestroyAPIView,
-
-    # Badge
-    BadgeListCreateAPIView,
-    BadgeRetrieveUpdateDestroyAPIView,
-
-    # Multiplicator
-    MultiplicatorListCreateAPIView,
-    MultiplicatorRetrieveUpdateDestroyAPIView,
-
-    # Workspace
-    WorkSpaceRetrieveUpdateDestroyAPIView,
-    WorskSpaceListCreateAPIView,
-
-    # Goal
-    GoalListCreateAPIView,
-    GoalRetrieveUpdateDestroyAPIView,
-
-    # TeamUser
-    TeamUserListCreateAPIView,
-    # TeamUserRetrieveUpdateDestroyAPIView,
-
-    # Task
-    # TaskListCreateAPIView,
-    # TaskRetrieveUpdateDestroyAPIView,
+    # Authentication
     RegisterView,
     LoginView,
     UserView,
     LogoutView,
+
+    # Workspace
+    WorkspaceView,
+
+    # Reward
+    RewardView,
+
+    # Badge
+    BadgeView,
+
+    # Multiplicator
+    MultiplicatorView,
+
+    # TeamUser
+    TeamUserView,
 )
 
 urlpatterns = [
     # SignUp
-    # path( "users/", CompanyUserRetrieveUpdateDestroyAPIView.as_view(), name="sign_up" ),
     path('register/', RegisterView.as_view(), name = 'register'),
     
     # Login
-    # path("token-auth/", authtoken_views.obtain_auth_token, name="token-auth"),
     path('login/', LoginView.as_view(), name = 'login'),
 
     # Get User
@@ -58,36 +36,24 @@ urlpatterns = [
     # Logout
     path('logout/', LogoutView.as_view(), name = 'logout'),
 
-    # Role
-    path( "roles/", RoleListCreateAPIView.as_view(), name="role-list-create" ),
-    path( "roles/<int:pk>", RoleRetrieveUpdateDestroyAPIVIew.as_view(), name="role-retrieve-update-destroy" ),
-
-    # CompanyUser
-    path( "company_user/", CompanyUserListCreateAPIView.as_view(), name="company_user-list-create" ),
-    path( "company_user/<int:pk>", CompanyUserRetrieveUpdateDestroyAPIView.as_view(), name="company_user-retrieve-update-destroy" ),
+    # Workspace
+    path( "workspaces/", WorkspaceView.as_view(), name="workspaces" ),
 
     # Reward
-    path( "rewards/", RewardListCreateAPIView.as_view(), name="reward-list-create" ),
-    path( "rewards/<int:pk>", RewardsRetrieveUpdateDestroyAPIView.as_view(), name="reward-retrieve-update-destroy" ),
+    path( "rewards/", RewardView.as_view(), name="reward-list-create" ),
 
-    # Badge
-    path( "badges/", BadgeListCreateAPIView.as_view(), name="badge-list-create" ),
-    path( "badges/<int:pk>", BadgeRetrieveUpdateDestroyAPIView.as_view(), name="badge-retrieve-update-destroy" ),
+    # # Badge
+    path( "badges/", BadgeView.as_view(), name="badge-list-create" ),
 
     # Multiplicator
-    path( "multiplicators/", MultiplicatorListCreateAPIView.as_view(), name="multiplicator-list-create" ),
-    path( "multiplicators/<int:pk>", MultiplicatorRetrieveUpdateDestroyAPIView.as_view(), name="multiplicator-retrieve-update-destroy" ),
-
-    # Workspace
-    path( "workspaces/", WorskSpaceListCreateAPIView.as_view(), name="Workspace-list-create" ),
-    path( "workspaces/<int:pk>", WorkSpaceRetrieveUpdateDestroyAPIView.as_view(), name="Workspace-retrieve-update-destroy" ),
-
-    # Goal
-    path( "goals/", GoalListCreateAPIView.as_view(), name="goal-list-create" ),
-    path( "goals/<int:pk>", GoalRetrieveUpdateDestroyAPIView.as_view(), name="goal-retrieve-update-destroy" ),
+    path( "multiplicators/", MultiplicatorView.as_view(), name="multiplicator-list-create" ),
 
     # TeamUser
-    path( "team_users/", TeamUserListCreateAPIView.as_view(), name="team_user-list-create" ),
+    # path( "team_users/", TeamUserView.as_view(), name="team_user-list-create" ),
+
+    # # Goal
+    # path( "goals/", GoalListCreateAPIView.as_view(), name="goal-list-create" ),
+
     # path( "team_users/<int:pk>", TeamUserRetrieveUpdateDestroyAPIView.as_view(), name="team_user-retrieve-update-destroy" ),
 
     # Task
