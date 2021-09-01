@@ -40,14 +40,14 @@ class CompanyUser(models.Model):
     #Relations
 
     def __str__(self):
-        return f"{self.user.username}"
+        return f"{self.user.email}"
 
 class Reward(models.Model):
     name = models.CharField( max_length=100 )
     description = models.TextField()
     icon = models.ImageField( upload_to="icon/reward", blank=True, null=True )
     points_needed = models.IntegerField()
-    status = models.CharField( max_length=50 )
+    status = models.CharField(blank=True, max_length=50 )
     company_user = models.ForeignKey( CompanyUser, on_delete=models.CASCADE, related_name="rewards" )
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -125,7 +125,7 @@ class Task(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     message = models.TextField()
-    message_refused = models.TextField()
+    message_refused = models.TextField(null=True,blank=True)
     goal = models.ForeignKey( Goal, on_delete=models.CASCADE, related_name="tasks_goal" )
     team_user = models.ForeignKey( TeamUser, on_delete=models.CASCADE, related_name="tasks_team_user" )
     created_at = models.DateTimeField(auto_now_add=True)
