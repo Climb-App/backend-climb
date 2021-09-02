@@ -30,6 +30,8 @@ from .serializers import (
 
     # Badge
     BadgeSerializar,
+    BadgeListModelSerializer,
+    BadgeModelSerializer,
 
     # TeamUser
     TeamUserSerializar,
@@ -173,6 +175,21 @@ class RewardView( APIView ):
         return Response(serializer.data)
 
 ''' Badge '''
+class BadgeListCreateAPIView( generics.ListCreateAPIView ):
+    queryset = Badge.objects.all()
+    serializer_class = BadgeListModelSerializer
+
+    def get_serializer_class(self):
+        serializer_class = self.serializer_class
+        if self.request.method == "POST":
+            serializer_class = BadgeModelSerializer
+
+        return serializer_class
+
+class BadgeRetrieveUpdateDestroyAPIView( generics.RetrieveUpdateDestroyAPIView ):
+    queryset = Badge.objects.all()
+    serializer_class = BadgeListModelSerializer
+
 class BadgeView( APIView ):
     def get(self, request):
         token = request.COOKIES.get('token')
