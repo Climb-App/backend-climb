@@ -148,6 +148,8 @@ class RewardListCreateAPIView( generics.ListCreateAPIView ):
     def get_serializer_class(self):
         serializer_class = self.serializer_class
         if self.request.method == "POST":
+            # print(self.request.data)
+            # print(CompanyUser.objects.all())
             serializer_class = RewardModelSerializer
 
         return serializer_class

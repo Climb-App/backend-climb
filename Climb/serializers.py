@@ -26,6 +26,7 @@ class RewardListModelSerializer( serializers.ModelSerializer ):
         fields = [ "id", "name", "description", "points_needed", "status", "company_user" ]
 
 class RewardModelSerializer( serializers.ModelSerializer ):
+    # Serializador post
     class Meta:
         model = Reward
         fields = [ "id", "name", "description", "icon", "points_needed", "status", "company_user" ]

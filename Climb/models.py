@@ -40,7 +40,7 @@ class CompanyUser(models.Model):
     #Relations
 
     def __str__(self):
-        return f"{self.user.email}"
+        return f"{self.user.email} {self.user.id} "
 
 class Reward(models.Model):
     name = models.CharField( max_length=100 )
@@ -57,7 +57,7 @@ class Reward(models.Model):
 class Badge(models.Model):
     name = models.CharField( max_length=100 )
     description = models.TextField()
-    icon = models.ImageField( upload_to="icon/badge", blank=True, null=True )
+    icon = models.CharField(max_length=255, blank=True, null=True )
     points_needed_min = models.IntegerField()
     points_needed_max = models.IntegerField()
     company_user = models.ForeignKey( CompanyUser, on_delete=models.CASCADE, related_name="badges" )
