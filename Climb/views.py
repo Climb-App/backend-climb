@@ -21,6 +21,9 @@ from .serializers import (
 
     # Reward
     RewardSerializar,
+    RewardModelSerializer,
+    RewardListModelSerializer,
+    RewardRetrieveModelSerializer,
 
     # Multiplicator
     MultiplicatorSerializar,
@@ -136,6 +139,21 @@ class WorkspaceView( APIView ):
         return Response(serializer.data)
 
 ''' Reward '''
+class RewardListCreateAPIView( generics.ListCreateAPIView ):
+    queryset = Reward.objects.all()
+    serializer_class = RewardListModelSerializer
+
+    def get_serializer_class(self):
+        serializer_class = self.serializer_class
+        if self.request.method == "POST":
+            serializer_class = RewardModelSerializer
+
+        return serializer_class
+
+class RewardsRetrieveUpdateDestroyAPIView( generics.RetrieveUpdateDestroyAPIView ):
+    queryset = Reward.objects.all()
+    serializer_class = RewardRetrieveModelSerializer
+
 class RewardView( APIView ):
     def get(self, request):
         token = request.COOKIES.get('token')

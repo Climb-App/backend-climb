@@ -32,7 +32,7 @@ class RewardModelSerializer( serializers.ModelSerializer ):
 
 class RewardRetrieveModelSerializer( serializers.ModelSerializer ):
     company_user_id = CompanyUserModelSerializer
-    
+
     class Meta:
         model = Reward
         fields = [ "id", "name", "description", "icon", "points_needed", "status", "company_user_id" ]

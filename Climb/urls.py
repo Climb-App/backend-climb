@@ -12,6 +12,7 @@ from .views import (
 
     # Reward
     RewardView,
+    RewardListCreateAPIView,
 
     # Badge
     BadgeView,
@@ -40,7 +41,8 @@ urlpatterns = [
     path( "workspaces/", WorkspaceView.as_view(), name="workspaces" ),
 
     # Reward
-    path( "rewards/", RewardView.as_view(), name="reward-list-create" ),
+    path( "rewards/", RewardView.as_view(), name="reward" ),
+    path( "rewards_test/", RewardListCreateAPIView.as_view(), name="reward-list-create" ),
 
     # # Badge
     path( "badges/", BadgeView.as_view(), name="badge-list-create" ),
