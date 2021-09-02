@@ -23,50 +23,50 @@ class CompanyUserModelSerializer( serializers.ModelSerializer ):
 class RewardListModelSerializer( serializers.ModelSerializer ):
     class Meta:
         model = Reward
-        fields = [ "id", "name", "description", "points_needed", "status", "company_user_id" ]
+        fields = [ "id", "name", "description", "points_needed", "status", "company_user" ]
 
 class RewardModelSerializer( serializers.ModelSerializer ):
     class Meta:
         model = Reward
-        fields = [ "id", "name", "description", "icon", "points_needed", "status", "company_user_id" ]
+        fields = [ "id", "name", "description", "icon", "points_needed", "status", "company_user" ]
 
 class RewardRetrieveModelSerializer( serializers.ModelSerializer ):
     company_user_id = CompanyUserModelSerializer
 
     class Meta:
         model = Reward
-        fields = [ "id", "name", "description", "icon", "points_needed", "status", "company_user_id" ]
+        fields = [ "id", "name", "description", "icon", "points_needed", "status", "company_user" ]
 
 ''' Badge Models Serializer '''
 class BadgeListModelSerializer( serializers.ModelSerializer ):
     class Meta:
         model = Badge
-        fields = [ "id", "name", "description", "points_needed_min", "points_needed_max", "company_user_id" ]
+        fields = [ "id", "name", "description", "points_needed_min", "points_needed_max", "company_user" ]
 
 class BadgeModelSerializer( serializers.ModelSerializer ):
     class Meta:
         model = Badge
-        fields = [ "id", "name", "description", "icon", "points_needed_min", "points_needed_max", "company_user_id" ]
+        fields = [ "id", "name", "description", "icon", "points_needed_min", "points_needed_max", "company_user" ]
 
 class BadgeRetrieveModelSerializer( serializers.ModelSerializer ):
     company_user_id = CompanyUserModelSerializer
     
     class Meta:
         model = Badge
-        fields = [ "id", "name", "description", "icon", "points_needed_min", "points_needed_max", "company_user_id" ]
+        fields = [ "id", "name", "description", "icon", "points_needed_min", "points_needed_max", "company_user" ]
 
 ''' Multiplicator '''
 class MultiplicatorListModelSerializer( serializers.ModelSerializer ):
     class Meta:
         model = Multiplicator
-        fields = [ "id", "name", "streak", "company_user_id" ]
+        fields = [ "id", "name", "streak", "company_user" ]
 
 class MultiplicatorRetrieveModelSerializer( serializers.ModelSerializer ):
     company_user_id = CompanyUserModelSerializer
 
     class Meta:
         model = Multiplicator
-        fields = [ "id", "name", "streak", "company_user_id" ]
+        fields = [ "id", "name", "streak", "company_user" ]
 
 
 class WorkspaceRetrieveModelSerializer( serializers.ModelSerializer ):
@@ -74,7 +74,7 @@ class WorkspaceRetrieveModelSerializer( serializers.ModelSerializer ):
     
     class Meta:
         model = Workspace
-        fields = [ "id", "name", "description", "company_user_id" ]
+        fields = [ "id", "name", "description", "company_user" ]
 
 ''' Goal'''
 class GoalListModelSerializer( serializers.ModelSerializer ):
