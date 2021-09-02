@@ -26,9 +26,10 @@ class RewardListModelSerializer( serializers.ModelSerializer ):
         fields = [ "id", "name", "description", "points_needed", "status", "company_user_id" ]
 
 class RewardModelSerializer( serializers.ModelSerializer ):
+    # Serializador post
     class Meta:
         model = Reward
-        fields = [ "id", "name", "description", "icon", "points_needed", "status", "company_user_id" ]
+        fields = [ "id", "name", "description", "icon", "points_needed", "status", "company_user" ]
 
 class RewardRetrieveModelSerializer( serializers.ModelSerializer ):
     company_user_id = CompanyUserModelSerializer
@@ -46,7 +47,7 @@ class BadgeListModelSerializer( serializers.ModelSerializer ):
 class BadgeModelSerializer( serializers.ModelSerializer ):
     class Meta:
         model = Badge
-        fields = [ "id", "name", "description", "icon", "points_needed_min", "points_needed_max", "company_user_id" ]
+        fields = [ "id", "name", "description", "icon", "points_needed_min", "points_needed_max", "company_user" ]
 
 class BadgeRetrieveModelSerializer( serializers.ModelSerializer ):
     company_user_id = CompanyUserModelSerializer
