@@ -1,11 +1,14 @@
-# from django.urls import path
-# from rest_framework.authtoken import views as authtoken_views
-# from .views import (
-#     # Authentication
-#     RegisterView,
-#     LoginView,
-#     UserView,
-#     LogoutView,
+from django.urls import path
+from rest_framework.authtoken import views as authtoken_views
+from .views import (
+    # Authentication
+    RegisterView,
+    RegisterAdminView,
+    RegisterMemberView,
+    LoginView,
+    UserView,
+    LogoutView,
+    RoleView,
 
 #     # Workspace
 #     WorkspaceView,
@@ -27,20 +30,25 @@
 
 #     # TeamUser
 #     TeamUserView,
-# )
+)
 
-# urlpatterns = [
-#     # SignUp
-#     path('register/', RegisterView.as_view(), name = 'register'),
-    
-#     # Login
-#     path('login/', LoginView.as_view(), name = 'login'),
+urlpatterns = [
+    # SignUp
+    path('register/', RegisterView.as_view(), name = 'register'),
+    path('register/admin', RegisterAdminView.as_view(), name = 'register'),
+    path('register/member', RegisterMemberView.as_view(), name = 'register'),
 
-#     # Get User
-#     path('user/', UserView.as_view(), name = 'users'),
+    # Login
+    path('login/', LoginView.as_view(), name = 'login'),
 
-#     # Logout
-#     path('logout/', LogoutView.as_view(), name = 'logout'),
+    # Get User
+    path('user/', UserView.as_view(), name = 'users'),
+
+    # Logout
+    path('logout/', LogoutView.as_view(), name = 'logout'),
+
+    # Create Role
+    path('role/', RoleView.as_view(), name = 'roleUser')
 
 #     # Workspace
 #     path( "workspaces/", WorkspaceView.as_view(), name="workspaces" ),
@@ -71,4 +79,4 @@
 #     # Task
 #     # path( "tasks/", TaskListCreateAPIView.as_view(), name="team_user-list-create" ),
 #     # path( "tasks/<int:pk>", TaskRetrieveUpdateDestroyAPIView.as_view(), name="team_user-retrieve-update-destroy" ),
-# ]
+]

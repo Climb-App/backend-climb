@@ -11,10 +11,6 @@ class Role(models.Model):
     def __str__(self):
         return f"{self.name}"
 
-# class Company( models.Model ):
-#     name = models.CharField( max_length=255 )
-#     created_at = models.DateTimeField( auto_now_add=True )
-
 class User(AbstractUser):
     role = models.ForeignKey( Role, on_delete=models.CASCADE, related_name="team_users_roles" )
     name = models.CharField(blank=True, max_length=255)
@@ -38,7 +34,7 @@ class Workspace(models.Model):
 
     def __str__(self):
         return f"{self.name} {self.description}"
-
+        
 class Reward(models.Model):
     name = models.CharField( max_length=100 )
     description = models.TextField()
