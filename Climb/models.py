@@ -3,20 +3,17 @@ from django.db import models
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-# # Create your models here.
-
+# Create your models here.
 class Role(models.Model):
-    role_TYPES = (
-        ("Admin", "admin"),
-        ("Member", "member"),
-        ("Leader", "leader"),
-    )
-
-    name = models.CharField( max_length=50, choices=role_TYPES, default="Member"  )
+    name = models.CharField( max_length=50, default="Member" )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.name}"
+
+# class Company( models.Model ):
+#     name = models.CharField( max_length=255 )
+#     created_at = models.DateTimeField( auto_now_add=True )
 
 class User(AbstractUser):
     role = models.ForeignKey( Role, on_delete=models.CASCADE, related_name="team_users_roles" )
@@ -24,22 +21,23 @@ class User(AbstractUser):
     email = models.EmailField(blank=True, max_length=255, unique=True)
     password = models.CharField(max_length=255)
     username = None
+    avatar = models.CharField(max_length=500, blank=True )
+    rfc = models.CharField( max_length=13, blank=True, null=True )
+    address = models.CharField( max_length=255 )
+    company = models.IntegerField( null=True )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
-class CompanyUser(models.Model):
-    user= models.OneToOneField(to=User,on_delete=models.CASCADE,related_name='companies')
-    avatar = models.CharField(max_length=500 , blank=True )
-    rfc = models.CharField( max_length=13, blank=True, null=True )
-    address = models.CharField( max_length=255 )
-    # role = models.ForeignKey( Role, on_delete=models.CASCADE, related_name="roles",null=True )
+class Workspace(models.Model):
+    name = models.CharField( max_length=100 )
+    description = models.TextField()
+    user = models.ManyToManyField( User )
     created_at = models.DateTimeField(auto_now_add=True)
 
-    #Relations
-
     def __str__(self):
-        return f"{self.user.email} {self.user.id} "
+        return f"{self.name} {self.description}"
 
 class Reward(models.Model):
     name = models.CharField( max_length=100 )
@@ -47,7 +45,7 @@ class Reward(models.Model):
     icon = models.CharField(max_length=500,blank=True, null=True )
     points_needed = models.IntegerField()
     status = models.CharField(blank=True, max_length=50 )
-    company_user = models.ForeignKey( CompanyUser, on_delete=models.CASCADE, related_name="rewards" )
+    user = models.ManyToManyField( User )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -59,7 +57,7 @@ class Badge(models.Model):
     icon = models.CharField(max_length=255, blank=True, null=True )
     points_needed_min = models.IntegerField()
     points_needed_max = models.IntegerField()
-    company_user = models.ForeignKey( CompanyUser, on_delete=models.CASCADE, related_name="badges" )
+    user = models.ManyToManyField( User )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -68,20 +66,11 @@ class Badge(models.Model):
 class Multiplicator(models.Model):
     name = models.CharField( max_length=100 )
     streak = models.IntegerField()
-    company_user = models.ForeignKey( CompanyUser, on_delete=models.CASCADE, related_name="multiplicators" )
+    user = models.ManyToManyField( User )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.name}"
-
-class Workspace(models.Model):
-    name = models.CharField( max_length=100 )
-    description = models.TextField()
-    company_user = models.ForeignKey( CompanyUser, on_delete=models.CASCADE, related_name="workspaces" )
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.name} {self.description}"
 
 class Goal(models.Model):
     name = models.CharField( max_length=100 )
@@ -93,20 +82,6 @@ class Goal(models.Model):
 
     def __str__(self):
         return f"{self.name} {self.description}"
-
-class TeamUser(models.Model):
-    user= models.OneToOneField(to=User,on_delete=models.CASCADE,related_name='teamUsers')
-    avatar = models.ImageField( upload_to="avatar/team_user", blank=True )
-    points_earned = models.IntegerField()
-    points_available = models.IntegerField()
-    # role = models.ForeignKey( Role, on_delete=models.CASCADE, related_name="team_users_roles" )
-    company_user = models.ForeignKey( CompanyUser, on_delete=models.CASCADE, related_name="team_users_companies" )
-    workspace = models.ManyToManyField( Workspace ) #ManyToMany
-    reward = models.ManyToManyField( Reward ) #ManyToMany
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.user} "
 
 class Task(models.Model):
     Status_TYPES = (
@@ -126,7 +101,7 @@ class Task(models.Model):
     message = models.TextField()
     message_refused = models.TextField(null=True,blank=True)
     goal = models.ForeignKey( Goal, on_delete=models.CASCADE, related_name="tasks_goal" )
-    team_user = models.ForeignKey( TeamUser, on_delete=models.CASCADE, related_name="tasks_team_user" )
+    user = models.ForeignKey( User, on_delete=models.CASCADE, related_name="tasks_user" )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
