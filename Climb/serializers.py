@@ -163,6 +163,23 @@ class UserSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+class TaskSerializer( serializers.ModelSerializer ):
+    class Meta:
+        model = Task
+        fields = [ "id", "name", "description", "deadline", "points_value", "status", "start_date", "end_date", "message", "message_refused", "goal", "team_user" ]
+
+class GoalSerializer( serializers.ModelSerializer ):    
+    class Meta:
+        model = Goal
+        fields = [ "id", "name", "description", "deadline", "progress", "workspace" ]
+
+class GoalDetailSerializer( serializers.ModelSerializer ):
+    tasks_goal = TaskSerializer( many=True )
+    
+    class Meta:
+        model = Goal
+        fields = [ "id", "name", "description", "deadline", "progress", "workspace", "tasks_goal" ]
+
 class WorkspacesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Workspace
@@ -170,7 +187,20 @@ class WorkspacesSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'description',
-            'company_user'
+            'company_user',
+        ]
+
+class WorkspaceDetailSerializer(serializers.ModelSerializer):
+    goals = GoalSerializer( many=True )
+    
+    class Meta:
+        model = Workspace
+        fields = [
+            'id',
+            'name',
+            'description',
+            'company_user',
+            'goals'
         ]
 
 class RewardSerializar(serializers.ModelSerializer):

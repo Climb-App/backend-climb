@@ -15,9 +15,18 @@ from .permissions import OnlyAdminCanCreate
 from .serializers import (
     # User
     UserSerializer,
+    WorkspaceRetrieveModelSerializer,
 
     # Workspace
     WorkspacesSerializer,
+    WorkspaceDetailSerializer,
+
+    # Goal
+    GoalSerializer,
+    GoalDetailSerializer,
+
+    # Taks
+    TaskSerializer,
 
     # Reward
     RewardSerializar,
@@ -105,9 +114,9 @@ class UserView(APIView):
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Unauthenticated!')
 
-        user = User.objects.filter(id=payload['id']).first()
+        user = User.objects.filter(id=payload['id'])
 
-        serializer = UserSerializer(user)
+        serializer = UserSerializer(user, many=True)
 
         return Response(serializer.data)
 
@@ -134,11 +143,62 @@ class WorkspaceView( APIView ):
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Unauthenticated!')
 
-        workspaces = Workspace.objects.filter(company_user=payload['id']).first()
+        # segunda consulta para que me traiga el id del company_user
+        company_user = CompanyUser.objects.filter( user__id=payload['id'] ).first()
+        
+        workspaces = Workspace.objects.filter(company_user_id=company_user)
 
-        serializer = WorkspacesSerializer(workspaces)
+        serializer = WorkspacesSerializer(workspaces, many = True)
 
         return Response(serializer.data)
+    
+    def post( self, request ):
+        token = request.COOKIES.get('token')
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        serializer = WorkspacesSerializer( data = request.data )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response( serializer.errors )
+
+class WorkspaceDetailView( APIView ):
+    def get( self, request, pk ):
+        workspace = Workspace.objects.filter( id = pk ).first()
+        workspace_serializer = WorkspaceDetailSerializer( workspace )
+
+        return Response( workspace_serializer.data )
+
+class WorkspaceGoalsView( APIView ):
+    def get( self, request, pk ):
+        goals = Goal.objects.filter( workspace = pk )
+        goals_serializer = GoalSerializer( goals, many=True )
+
+        return Response( goals_serializer.data )
+
+class WorkspaceGoalsDetailView( APIView ):
+    def get( self, request, pk, goal_id ):
+        goal = Goal.objects.filter( id = goal_id ).first()
+        goal_serializer = GoalDetailSerializer( goal )
+
+        return Response( goal_serializer.data )
+
+class WorkspaceGoalsTaskDetailView( APIView ):
+    def get( self, request, pk, goal_id, task_id ):
+        task = Task.objects.filter( id = task_id ).first()
+        task_serializer = TaskSerializer( task )
+
+        return Response( task_serializer.data )
+
 
 ''' Reward '''
 class RewardListCreateAPIView( generics.ListCreateAPIView ):

@@ -9,6 +9,10 @@ from .views import (
 
     # Workspace
     WorkspaceView,
+    WorkspaceDetailView,
+    WorkspaceGoalsView,
+    WorkspaceGoalsDetailView,
+    WorkspaceGoalsTaskDetailView,
 
     # Reward
     RewardView,
@@ -40,6 +44,10 @@ urlpatterns = [
 
     # Workspace
     path( "workspaces/", WorkspaceView.as_view(), name="workspaces" ),
+    path( "workspaces/<int:pk>", WorkspaceDetailView.as_view(), name="workspaces" ),
+    path( "workspaces/<int:pk>/goals", WorkspaceGoalsView.as_view(), name="workspaces" ),
+    path( "workspaces/<int:pk>/goals/<int:goal_id>", WorkspaceGoalsDetailView.as_view(), name="workspaces" ),
+    path( "workspaces/<int:pk>/goals/<int:goal_id>/<int:task_id>", WorkspaceGoalsTaskDetailView.as_view(), name="workspaces" ),
 
     # Reward
     path( "rewards/", RewardView.as_view(), name="reward" ),

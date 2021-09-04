@@ -28,13 +28,12 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
-
 class CompanyUser(models.Model):
     user= models.OneToOneField(to=User,on_delete=models.CASCADE,related_name='companies')
     avatar = models.CharField(max_length=500 , blank=True )
     rfc = models.CharField( max_length=13, blank=True, null=True )
     address = models.CharField( max_length=255 )
-    role = models.ForeignKey( Role, on_delete=models.CASCADE, related_name="roles",null=True )
+    # role = models.ForeignKey( Role, on_delete=models.CASCADE, related_name="roles",null=True )
     created_at = models.DateTimeField(auto_now_add=True)
 
     #Relations
