@@ -7,6 +7,11 @@ from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 import jwt
 import datetime
+from rest_framework import status
+from django.contrib.auth.models import User
+from .serializers import ChangePasswordSerializer
+from rest_framework.permissions import IsAuthenticated   
+
 
 # Permissions
 from .permissions import OnlyAdminCanCreate
@@ -18,20 +23,21 @@ from .serializers import (
     UserAdminSerializer,
     UserMemberSerializer,
     UserGetSerializer,
+    # RecoveryPassSerializer,
     RoleListModelSerializer,
     RoleModelSerializer,
     # WorkspaceRetrieveModelSerializer,
 
     # Workspace
-    # WorkspacesSerializer,
-    # WorkspaceDetailSerializer,
+    WorkspacesSerializer,
+    WorkspaceDetailSerializer,
 
     # Goal
-    # GoalSerializer,
-    # GoalDetailSerializer,
+    GoalSerializer,
+    GoalDetailSerializer,
 
     # Taks
-    # TaskSerializer,
+    TaskSerializer,
 
     # Reward
     # RewardSerializar,
@@ -150,6 +156,29 @@ class UserView(APIView):
 
         return Response(serializer.data)
 
+    def patch(self, request):
+    
+        token = request.COOKIES.get('token')
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        user = User.objects.filter(id=pk).first()
+
+        if user.role__id == 1:
+            serializer = UserAdminSerializer(user, data=request.data, partial=True)
+        else:
+            serializer = UserMemberSerializer(user, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(data="wrong parameters")
+
 # Vista para desloguear al usuario.
 class LogoutView(APIView):
     def post(self, request):
@@ -160,6 +189,76 @@ class LogoutView(APIView):
         }
 
         return response
+
+# class RecoveryPassView(PasswordResetView):
+#     def patch(self, request):
+        
+#         token = request.COOKIES.get('token')
+#         if not token:
+#             raise AuthenticationFailed('Unauthenticated!')
+#         try:
+#             payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+#         except jwt.ExpiredSignatureError:
+#             raise AuthenticationFailed('Unauthenticated!')
+
+#         user = User.objects.filter(id=payload['id']).first()
+
+#         serializer = RecoveryPassSerializer(user, data=request.data, partial=True)
+        
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+
+#         return Response(data="wrong parameters")
+
+
+class ChangePasswordView(generics.UpdateAPIView):
+    """
+    An endpoint for changing password.
+    """
+    serializer_class = ChangePasswordSerializer
+    model = User
+
+    def get_object(self, request): #######
+
+        token = request.COOKIES.get('token')
+        # Si el token no llega con la peticion, devuelve error de autentificacion
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+        # Se decodifica y regresa data del usuario logueado al cliente.
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+        user = User.objects.filter(id=payload['id']).first()
+        return user
+
+    def update(self, request, *args, **kwargs):
+        self.object = self.get_object(request)
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            # Check old password
+            if not self.object.check_password(serializer.data.get("old_password")):
+                return Response({"old_password": ["Wrong password."]}, status=status.HTTP_400_BAD_REQUEST)
+            # set_password also hashes the password that the user will get
+            self.object.set_password(serializer.data.get("new_password"))
+            self.object.save()
+            response = {
+                'status': 'success',
+                'code': status.HTTP_200_OK,
+                'message': 'Password updated successfully',
+                'data': []
+            }
+
+            return Response(response)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
 
 # Vista que permite crear nuevos roles de usuarios y listarlos
 class RoleView(generics.ListCreateAPIView):
@@ -173,70 +272,140 @@ class RoleView(generics.ListCreateAPIView):
 
         return serializer_class
 
-
-
-
 # ''' Workspace '''
-# class WorkspaceView( APIView ): 
-#     def get(self, request):
-#         token = request.COOKIES.get('token')
+class WorkspaceView( APIView ): 
+    def get(self, request):
+        token = request.COOKIES.get('token')
 
-#         if not token:
-#             raise AuthenticationFailed('Unauthenticated!')
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
 
-#         try:
-#             payload = jwt.decode(token, 'secret', algorithms=["HS256"])
-#         except jwt.ExpiredSignatureError:
-#             raise AuthenticationFailed('Unauthenticated!')
-
-#         # segunda consulta para que me traiga el id del company_user
-#         company_user = User.objects.filter( user__id=payload['id'] ).first()
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
         
-#         workspaces = Workspace.objects.filter(company_user_id=company_user)
+        # Filtramos los workspaces del usuario que hace la peticion
+        workspaces = Workspace.objects.filter(user__id=payload['id'])
 
-#         serializer = WorkspacesSerializer(workspaces, many = True)
+        serializer = WorkspacesSerializer(workspaces, many = True)
 
-#         return Response(serializer.data)
+        return Response(serializer.data)
     
-#     def post( self, request ):
-#         token = request.COOKIES.get('token')
+    def post( self, request ):
+        token = request.COOKIES.get('token')
 
-#         if not token:
-#             raise AuthenticationFailed('Unauthenticated!')
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
 
-#         try:
-#             payload = jwt.decode(token, 'secret', algorithms=["HS256"])
-#         except jwt.ExpiredSignatureError:
-#             raise AuthenticationFailed('Unauthenticated!')
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
 
-#         serializer = WorkspacesSerializer( data = request.data )
+        serializer = WorkspacesSerializer( data = request.data )
 
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
 
-#         return Response( serializer.errors )
+        return Response( serializer.errors )
 
-# class WorkspaceDetailView( APIView ):
-#     def get( self, request, pk ):
-#         workspace = Workspace.objects.filter( id = pk ).first()
-#         workspace_serializer = WorkspaceDetailSerializer( workspace )
 
-#         return Response( workspace_serializer.data )
+class WorkspaceDetailView( APIView ):
+    def get( self, request, pk ):
 
-# class WorkspaceGoalsView( APIView ):
-#     def get( self, request, pk ):
-#         goals = Goal.objects.filter( workspace = pk )
-#         goals_serializer = GoalSerializer( goals, many=True )
+        token = request.COOKIES.get('token')
 
-#         return Response( goals_serializer.data )
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
 
-# class WorkspaceGoalsDetailView( APIView ):
-#     def get( self, request, pk, goal_id ):
-#         goal = Goal.objects.filter( id = goal_id ).first()
-#         goal_serializer = GoalDetailSerializer( goal )
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
 
-#         return Response( goal_serializer.data )
+        workspace = Workspace.objects.filter( id = pk ).first()
+        workspace_serializer = WorkspaceDetailSerializer( workspace )
+
+        return Response( workspace_serializer.data )
+
+    def patch(self, request, pk):
+
+        token = request.COOKIES.get('token')
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        workspace_object = Workspace.objects.filter( id = pk ).first()
+        serializer = WorkspacesSerializer(workspace_object, data=request.data, partial=True) # set partial=True to update a data partially
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(data="wrong parameters")
+
+class WorkspaceGoalsView( APIView ):
+    def get( self, request, pk ):
+        token = request.COOKIES.get('token')
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        goals = Goal.objects.filter( workspace = pk )
+        goals_serializer = GoalSerializer( goals, many=True )
+
+        return Response( goals_serializer.data )
+
+class GoalsDetailView( APIView ):
+    def get( self, request, pk ):
+
+        token = request.COOKIES.get('token')
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        goal = Goal.objects.filter( id = pk ).first()
+        goal_serializer = GoalDetailSerializer( goal )
+
+        return Response( goal_serializer.data )
+
+    def patch(self, request, pk):
+    
+        token = request.COOKIES.get('token')
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        goal_object = Goal.objects.filter( id = pk ).first()
+        serializer = GoalSerializer(goal_object, data=request.data, partial=True) # set partial=True to update a data partially
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(data="wrong parameters")
 
 # class WorkspaceGoalsTaskDetailView( APIView ):
 #     def get( self, request, pk, goal_id, task_id ):

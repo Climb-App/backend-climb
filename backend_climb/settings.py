@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_rest_passwordreset',
     'django_filters',
     'corsheaders',
     #My apps
@@ -71,7 +72,7 @@ ROOT_URLCONF = 'backend_climb.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [], # Se agrega el contenido de []
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -159,3 +160,13 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Email
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.dondominio.com'
+# EMAIT_PORT = 2525
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'climb@darnoy.com.mx'
+# EMAIL_HOST_PASSWORD = '64$XP96,\wLW'

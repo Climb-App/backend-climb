@@ -1,5 +1,6 @@
-from django.urls import path
+from django.urls import path, include
 from rest_framework.authtoken import views as authtoken_views
+from django.views.generic import TemplateView
 from .views import (
     # Authentication
     RegisterView,
@@ -8,13 +9,15 @@ from .views import (
     LoginView,
     UserView,
     LogoutView,
+    # RecoveryPassView,
+    ChangePasswordView,
     RoleView,
 
-#     # Workspace
-#     WorkspaceView,
-#     WorkspaceDetailView,
-#     WorkspaceGoalsView,
-#     WorkspaceGoalsDetailView,
+    # Workspaces
+    WorkspaceView,
+    WorkspaceDetailView,
+    WorkspaceGoalsView,
+    GoalsDetailView,
 #     WorkspaceGoalsTaskDetailView,
 
 #     # Reward
@@ -47,14 +50,18 @@ urlpatterns = [
     # Logout
     path('logout/', LogoutView.as_view(), name = 'logout'),
 
-    # Create Role
-    path('role/', RoleView.as_view(), name = 'roleUser')
+    # Recovery Password
+    # path('recovery/', RecoveryPassView.as_view(), name = 'recovery'),
+    path('change-password/', ChangePasswordView.as_view(), name='change-password'),
 
-#     # Workspace
-#     path( "workspaces/", WorkspaceView.as_view(), name="workspaces" ),
-#     path( "workspaces/<int:pk>", WorkspaceDetailView.as_view(), name="workspaces" ),
-#     path( "workspaces/<int:pk>/goals", WorkspaceGoalsView.as_view(), name="workspaces" ),
-#     path( "workspaces/<int:pk>/goals/<int:goal_id>", WorkspaceGoalsDetailView.as_view(), name="workspaces" ),
+    # Create Role
+    path('role/', RoleView.as_view(), name = 'roleUser'),
+
+    # Workspace
+    path( "workspaces/", WorkspaceView.as_view(), name="workspaces" ),
+    path( "workspaces/<int:pk>", WorkspaceDetailView.as_view(), name="workspaces" ), #Aprobada
+    path( "workspaces/<int:pk>/goals", WorkspaceGoalsView.as_view(), name="workspaces" ),
+    path( "goals/<int:pk>", GoalsDetailView.as_view(), name="workspaces" ),
 #     path( "workspaces/<int:pk>/goals/<int:goal_id>/<int:task_id>", WorkspaceGoalsTaskDetailView.as_view(), name="workspaces" ),
 
 #     # Reward

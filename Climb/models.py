@@ -2,6 +2,11 @@ from django.db import models
 # from django.contrib.auth.models import User
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.dispatch import receiver
+from django.urls import reverse
+from django_rest_passwordreset.signals import reset_password_token_created
+from django.core.mail import send_mail  
+
 
 # Create your models here.
 class Role(models.Model):
@@ -10,6 +15,25 @@ class Role(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+
+####### Modelo para reset de password
+
+@receiver(reset_password_token_created)
+def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
+
+    # email_plaintext_message = "{}?token={}".format(reverse('password_reset:reset-password-request'), reset_password_token.key)
+    email_plaintext_message = "{}?token={}".format(instance.request.build_absolute_uri(reverse('password_reset:reset-password-confirm')),reset_password_token.key)
+
+    send_mail(
+        # title:
+        "Password Reset for {title}".format(title="Some website title"),
+        # message:
+        email_plaintext_message,
+        # from:
+        "climb@darnoy.com.mx",
+        # to:
+        [reset_password_token.user.email]
+    )
 
 class User(AbstractUser):
     role = models.ForeignKey( Role, on_delete=models.CASCADE, related_name="team_users_roles" )
@@ -89,12 +113,12 @@ class Task(models.Model):
 
     name = models.CharField( max_length=100 )
     description = models.TextField()
-    deadline = models.DateField( blank=True, null=True )
+    deadline = models.DateField( blank=True) # Falta Migrarlo a la BD
     points_value = models.IntegerField()
     status = models.CharField( max_length=50, choices=Status_TYPES, default="To Do" )
-    start_date = models.DateField()
-    end_date = models.DateField()
-    message = models.TextField()
+    start_date = models.DateField(auto_now_add=True) # Falta Migrarlo a la BD
+    end_date = models.DateField(null=True) # Falta Migrarlo a la BD
+    message = models.TextField(null=True) # Falta Migrarlo a la BD
     message_refused = models.TextField(null=True,blank=True)
     goal = models.ForeignKey( Goal, on_delete=models.CASCADE, related_name="tasks_goal" )
     user = models.ForeignKey( User, on_delete=models.CASCADE, related_name="tasks_user" )

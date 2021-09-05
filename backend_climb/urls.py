@@ -20,4 +20,5 @@ from django.urls.conf import include
 urlpatterns = [
     path( 'admin/', admin.site.urls ),
     path( 'api/v1/', include( ( "Climb.urls","Climb" ) ) ),
+    path( 'api/password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
 ]

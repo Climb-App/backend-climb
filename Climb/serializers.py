@@ -1,10 +1,16 @@
 from django.db import models
-# from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Badge,Role,Multiplicator,Reward,Task,Goal,Workspace
 from rest_framework.authtoken.models import Token
-from .models import User
-
+from .models import (
+    User,
+    Badge, 
+    Role, 
+    Multiplicator, 
+    Reward, 
+    Task, 
+    Goal, 
+    Workspace
+    )
 
 
 # ''' Company User Models Serializer '''
@@ -237,45 +243,81 @@ class UserGetSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-# class TaskSerializer( serializers.ModelSerializer ):
+# class RecoveryPassSerializer(serializers.ModelSerializer):
 #     class Meta:
-#         model = Task
-#         fields = [ "id", "name", "description", "deadline", "points_value", "status", "start_date", "end_date", "message", "message_refused", "goal", "team_user" ]
+#         model = User 
+#         fields = ['password']
+        
+#         extra_kwargs = {
+#             'password': {'write_only': True}
+#         }
+#         def create(self, validated_data):
+#             password = validated_data.pop('password', None)
+#             instance = self.Meta.model(**validated_data)
+#             if password is not None:
+#                 instance.set_password(password)
+#             instance.save()
+#             return instance
 
-# class GoalSerializer( serializers.ModelSerializer ):    
-#     class Meta:
-#         model = Goal
-#         fields = [ "id", "name", "description", "deadline", "progress", "workspace" ]
+#         def update(self, instance, validated_data):
+#             instance.password = validated_data['password']
+#             self.Meta.create(instance.password)
 
-# class GoalDetailSerializer( serializers.ModelSerializer ):
-#     tasks_goal = TaskSerializer( many=True )
+#             return Response({"Message": "success"})
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    model = User
+
+    """
+    Serializer for password change endpoint.
+    """
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+
+
+class GoalSerializer( serializers.ModelSerializer ):    
+    class Meta:
+        model = Goal
+        fields = [ "id", "name", "description", "deadline", "progress", "workspace" ]
+
+class TaskSerializer( serializers.ModelSerializer ):
+    class Meta:
+        model = Task
+        fields = [ "id", "name", "description", "deadline", "points_value", "status", "start_date", "end_date", "message", "message_refused", "goal", "user" ]
+
+class GoalDetailSerializer( serializers.ModelSerializer ):
+    tasks_goal = TaskSerializer( many=True )
     
-#     class Meta:
-#         model = Goal
-#         fields = [ "id", "name", "description", "deadline", "progress", "workspace", "tasks_goal" ]
+    class Meta:
+        model = Goal
+        fields = [ "id", "name", "description", "deadline", "progress", "workspace", "tasks_goal" ]
 
-# class WorkspacesSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Workspace
-#         fields = [
-#             'id',
-#             'name',
-#             'description',
-#             'company_user',
-#         ]
+class WorkspacesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Workspace
+        fields = [
+            'id',
+            'name',
+            'description',
+            'user',
+        ]
 
-# class WorkspaceDetailSerializer(serializers.ModelSerializer):
-#     goals = GoalSerializer( many=True )
+class WorkspaceDetailSerializer(serializers.ModelSerializer):
+    goals = GoalSerializer( many=True )
     
-#     class Meta:
-#         model = Workspace
-#         fields = [
-#             'id',
-#             'name',
-#             'description',
-#             'company_user',
-#             'goals'
-#         ]
+    class Meta:
+        model = Workspace
+        fields = [
+            'id',
+            'name',
+            'description',
+            'user',
+            'goals'
+        ]
+
+
 
 # class RewardSerializar(serializers.ModelSerializer):
 #     class Meta:
