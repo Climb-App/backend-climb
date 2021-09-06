@@ -153,3 +153,7 @@ cython_debug/
 
 # IDE specific
 .vscode
+
+# key aws ec2 deploy
+ec2-climb.pem
+ConexionEC2.txt
