@@ -74,6 +74,7 @@ from .models import (
 
 # Vista para crear SuperUsuarios
 class RegisterView(APIView):
+
     def post(self, request):
         serializer = UserSerializer(data = request.data)
         serializer.is_valid(raise_exception=True)
@@ -117,6 +118,7 @@ class LoginView(APIView):
         # JWT encripta el id y envia token al cliente.
         payload = {
             'id': user.id,
+            'role': user.role,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
             'iat': datetime.datetime.utcnow()
         }
