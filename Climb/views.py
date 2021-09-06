@@ -118,7 +118,6 @@ class LoginView(APIView):
         # JWT encripta el id y envia token al cliente.
         payload = {
             'id': user.id,
-            'role': user.role,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
             'iat': datetime.datetime.utcnow()
         }
