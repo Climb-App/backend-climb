@@ -1,14 +1,38 @@
 from django.db import models
-# from django.contrib.auth.models import User
-from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.dispatch import receiver
-from django.urls import reverse
 from django_rest_passwordreset.signals import reset_password_token_created
-from django.core.mail import send_mail  
+from django.core.mail import EmailMultiAlternatives
+from django.shortcuts import render
+from django.template.loader import get_template
 
 
 # Create your models here.
+####### Modelo para reset de password
+
+@receiver(reset_password_token_created)
+def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
+
+    token = {"token" : "token={}".format( reset_password_token.key)}
+
+    content = get_template('reset_password.html').render(token)
+
+    message = EmailMultiAlternatives(
+        # title:
+        subject = "Recupera tu contrasena {user}".format(user=reset_password_token.user.email),
+        # message:
+        body = '',
+        # from:
+        from_email = "climb.app.back@gmail.com",
+        # to:
+        to = [reset_password_token.user.email],
+        cc=[]
+    )
+
+    message.attach_alternative(content, 'text/html')
+    message.send()
+
+
 class Role(models.Model):
     name = models.CharField( max_length=50, default="Member" )
     created_at = models.DateTimeField(auto_now_add=True)
@@ -16,24 +40,6 @@ class Role(models.Model):
     def __str__(self):
         return f"{self.name}"
 
-####### Modelo para reset de password
-
-@receiver(reset_password_token_created)
-def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
-
-    # email_plaintext_message = "{}?token={}".format(reverse('password_reset:reset-password-request'), reset_password_token.key)
-    email_plaintext_message = "{}?token={}".format(instance.request.build_absolute_uri(reverse('password_reset:reset-password-confirm')),reset_password_token.key)
-
-    send_mail(
-        # title:
-        "Password Reset for {title}".format(title="Some website title"),
-        # message:
-        email_plaintext_message,
-        # from:
-        "climb@darnoy.com.mx",
-        # to:
-        [reset_password_token.user.email]
-    )
 
 class User(AbstractUser):
     role = models.ForeignKey( Role, on_delete=models.CASCADE, related_name="team_users_roles" )

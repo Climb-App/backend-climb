@@ -72,7 +72,7 @@ ROOT_URLCONF = 'backend_climb.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [], # Se agrega el contenido de []
+        'DIRS': [os.path.join(BASE_DIR, 'templates')], # Se agrega el contenido de []
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -84,6 +84,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'backend_climb.wsgi.application'
 
@@ -164,9 +165,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Email
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.dondominio.com'
-# EMAIT_PORT = 2525
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = 'climb@darnoy.com.mx'
-# EMAIL_HOST_PASSWORD = '64$XP96,\wLW'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIT_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'climb.app.back@gmail.com'
+EMAIL_HOST_PASSWORD = 'osfcyynzvguaxygq'
