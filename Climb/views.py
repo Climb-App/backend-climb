@@ -119,7 +119,7 @@ class LoginView(APIView):
 
         response = Response()
 
-        response.set_cookie(key='token', value=token, httponly=True)
+        # response.set_cookie(key='token', value=token, httponly=True)
 
         response.data = {
             'token': token
@@ -132,7 +132,8 @@ class UserView(APIView):
 
     def get(self, request):
         # El backend recibe token del cliente 
-        token = request.COOKIES.get('token')
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
         # Si el token no llega con la peticion, devuelve error de autentificacion
         if not token:
@@ -154,7 +155,8 @@ class UserAdminView(APIView):
     
     def get(self, request, pk):
         # El backend recibe token del cliente 
-        token = request.COOKIES.get('token')
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
         # Si el token no llega con la peticion, devuelve error de autentificacion
         if not token:
@@ -174,7 +176,9 @@ class UserAdminView(APIView):
 
     def patch(self, request, pk):
     
-        token = request.COOKIES.get('token')
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
+
         if not token:
             raise AuthenticationFailed('Unauthenticated!')
         try:
@@ -198,7 +202,8 @@ class UserMemberView(APIView):
     
     def get(self, request, pk):
         # El backend recibe token del cliente 
-        token = request.COOKIES.get('token')
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
         # Si el token no llega con la peticion, devuelve error de autentificacion
         if not token:
@@ -218,7 +223,9 @@ class UserMemberView(APIView):
 
     def patch(self, request, pk):
     
-        token = request.COOKIES.get('token')
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
+
         if not token:
             raise AuthenticationFailed('Unauthenticated!')
         try:
@@ -243,7 +250,7 @@ class UserMemberView(APIView):
 class LogoutView(APIView):
     def post(self, request):
         response = Response()
-        response.delete_cookie('token')
+        # response.delete_cookie('token')
         response.data = {
             'message': 'success'
         }
@@ -260,7 +267,9 @@ class ChangePasswordView(generics.UpdateAPIView):
 
     def get_object(self, request): #######
 
-        token = request.COOKIES.get('token')
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
+
         # Si el token no llega con la peticion, devuelve error de autentificacion
         if not token:
             raise AuthenticationFailed('Unauthenticated!')
@@ -314,7 +323,7 @@ class RoleView(generics.ListCreateAPIView):
 class WorkspaceView( APIView ): 
     # Obtiene los workspaces relacionados con el usuario que hace la peticion
     def get(self, request):
-        token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
         if not token:
             raise AuthenticationFailed('Unauthenticated!')
@@ -333,7 +342,8 @@ class WorkspaceView( APIView ):
     
     # Crea un nuevo workspaces
     def post( self, request ):
-        token = request.COOKIES.get('token')
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
         if not token:
             raise AuthenticationFailed('Unauthenticated!')
@@ -357,7 +367,8 @@ class WorkspaceDetailView( APIView ):
     #Obtiene el detalle del workspace mediante su Id
     def get( self, request, pk ):
 
-        token = request.COOKIES.get('token')
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
         if not token:
             raise AuthenticationFailed('Unauthenticated!')
@@ -375,7 +386,8 @@ class WorkspaceDetailView( APIView ):
     # Actualiza un workspace mediante su Id
     def patch(self, request, pk):
 
-        token = request.COOKIES.get('token')
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
         if not token:
             raise AuthenticationFailed('Unauthenticated!')
@@ -400,7 +412,8 @@ class WorkspaceGoalsView( APIView ):
 
     # Obtiene los goals de un workspace
     def get( self, request, pk ):
-        token = request.COOKIES.get('token')
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
         if not token:
             raise AuthenticationFailed('Unauthenticated!')
@@ -424,7 +437,8 @@ class GoalCreateView(APIView):
 class GoalsDetailView( APIView ):
     def get( self, request, pk ):
 
-        token = request.COOKIES.get('token')
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
         if not token:
             raise AuthenticationFailed('Unauthenticated!')
@@ -441,7 +455,8 @@ class GoalsDetailView( APIView ):
 
     def patch(self, request, pk):
     
-        token = request.COOKIES.get('token')
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
         if not token:
             raise AuthenticationFailed('Unauthenticated!')
@@ -471,7 +486,8 @@ class TaskCreateView( APIView ):
 class TaskDetailView( APIView ):
     def get( self, request, pk ):
 
-        token = request.COOKIES.get('token')
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
         if not token:
             raise AuthenticationFailed('Unauthenticated!')
@@ -496,7 +512,9 @@ class TaskDetailView( APIView ):
 # Reward
 class RewardUserView(APIView):
     def get(self, request):
-        token = request.COOKIES.get('token')
+
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
         if not token:
             raise AuthenticationFailed('Unauthenticated!')
@@ -515,7 +533,9 @@ class RewardUserView(APIView):
 
 class RewardDetailView(APIView):
     def get(self, request, pk):
-        token = request.COOKIES.get('token')
+
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
         if not token:
             raise AuthenticationFailed('Unauthenticated!')
@@ -539,7 +559,9 @@ class RewardDetailView(APIView):
 
 class RewardCreateView(APIView):
     def post( self, request ):
-        token = request.COOKIES.get('token')
+
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
         if not token:
             raise AuthenticationFailed('Unauthenticated!')
@@ -560,7 +582,9 @@ class RewardCreateView(APIView):
 # Badge
 class BadgeUserView(APIView):
     def get(self, request):
-        token = request.COOKIES.get('token')
+
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
         if not token:
             raise AuthenticationFailed('Unauthenticated!')
@@ -579,7 +603,9 @@ class BadgeUserView(APIView):
 
 class BadgeDetailView(APIView):
     def get(self, request, pk):
-        token = request.COOKIES.get('token')
+
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
         if not token:
             raise AuthenticationFailed('Unauthenticated!')
@@ -603,7 +629,9 @@ class BadgeDetailView(APIView):
 
 class BadgeCreateView( APIView ):
     def post( self, request ):
-        token = request.COOKIES.get('token')
+
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
         if not token:
             raise AuthenticationFailed('Unauthenticated!')
@@ -625,6 +653,7 @@ class BadgeCreateView( APIView ):
 # class MultiplicatorView( APIView ):
 #     def get(self, request):
 #         token = request.COOKIES.get('token')
+#         token = request.headers['Authorization']
 
 #         if not token:
 #             raise AuthenticationFailed('Unauthenticated!')
