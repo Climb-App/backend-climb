@@ -32,6 +32,29 @@ ALLOWED_HOSTS = ["*"]
 
 #CORS_ALLOWED_HOSTS = ["http:// URL donde esta desplegado"]
 CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+ACCESS_CONTROL_ALLOW_HEADERS = True
+
+CORS_ALLOW_METHODS = (
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+)
+
+CORS_ALLOW_HEADERS = (
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+)
 
 # Application definition
 
@@ -85,9 +108,7 @@ TEMPLATES = [
     },
 ]
 
-
 WSGI_APPLICATION = 'backend_climb.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
