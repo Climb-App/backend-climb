@@ -65,6 +65,9 @@ from .models import (
 # Vista para crear SuperUsuarios
 class RegisterView(APIView):
 
+    def send_email(mail):
+        pass
+
     def post(self, request):
         serializer = UserSerializer(data = request.data)
         serializer.is_valid(raise_exception=True)
@@ -309,6 +312,7 @@ class RoleView(generics.ListCreateAPIView):
 
 # ''' Workspace '''
 class WorkspaceView( APIView ): 
+    # Obtiene los workspaces relacionados con el usuario que hace la peticion
     def get(self, request):
         token = request.COOKIES.get('token')
 
@@ -327,6 +331,7 @@ class WorkspaceView( APIView ):
 
         return Response(serializer.data)
     
+    # Crea un nuevo workspaces
     def post( self, request ):
         token = request.COOKIES.get('token')
 
@@ -349,6 +354,7 @@ class WorkspaceView( APIView ):
 
 
 class WorkspaceDetailView( APIView ):
+    #Obtiene el detalle del workspace mediante su Id
     def get( self, request, pk ):
 
         token = request.COOKIES.get('token')
@@ -366,6 +372,7 @@ class WorkspaceDetailView( APIView ):
 
         return Response( workspace_serializer.data )
 
+    # Actualiza un workspace mediante su Id
     def patch(self, request, pk):
 
         token = request.COOKIES.get('token')
@@ -390,6 +397,8 @@ class WorkspaceDetailView( APIView ):
         # Delete
 
 class WorkspaceGoalsView( APIView ):
+
+    # Obtiene los goals de un workspace
     def get( self, request, pk ):
         token = request.COOKIES.get('token')
 
@@ -461,6 +470,18 @@ class TaskCreateView( APIView ):
 
 class TaskDetailView( APIView ):
     def get( self, request, pk ):
+
+        token = request.COOKIES.get('token')
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
         task = Task.objects.filter( id = pk ).first()
         task_serializer = TaskSerializer( task )
 
