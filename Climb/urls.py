@@ -7,11 +7,10 @@ from .views import (
     RegisterAdminView,
     RegisterMemberView,
     LoginView,
-    UserView,
     LogoutView,
+    UserView,
     UserAdminView,
     UserMemberView,
-    # RecoveryPassView,
     ChangePasswordView,
     RoleView,
 
@@ -19,8 +18,10 @@ from .views import (
     WorkspaceView,
     WorkspaceDetailView,
     WorkspaceGoalsView,
+    GoalView,
     GoalsDetailView,
-#     WorkspaceGoalsTaskDetailView,
+    TaskView,
+    TaskDetailView,
 
 #     # Reward
 #     RewardView,
@@ -32,9 +33,6 @@ from .views import (
 
 #     # Multiplicator
 #     MultiplicatorView,
-
-#     # TeamUser
-#     TeamUserView,
 )
 
 urlpatterns = [
@@ -51,13 +49,11 @@ urlpatterns = [
     path('user/admin/<int:pk>', UserAdminView.as_view(), name = 'users'),
     path('user/member/<int:pk>', UserMemberView.as_view(), name = 'users'),
 
-    # path('user/<int:pk>', UserView.as_view(), name = 'users'),
 
     # Logout
     path('logout/', LogoutView.as_view(), name = 'logout'),
 
     # Recovery Password
-    # path('recovery/', RecoveryPassView.as_view(), name = 'recovery'),
     path('change-password/', ChangePasswordView.as_view(), name='change-password'),
 
     # Create Role
@@ -65,10 +61,12 @@ urlpatterns = [
 
     # Workspace
     path( "workspaces/", WorkspaceView.as_view(), name="workspaces" ),
-    path( "workspaces/<int:pk>", WorkspaceDetailView.as_view(), name="workspaces" ), #Aprobada
-    path( "workspaces/<int:pk>/goals", WorkspaceGoalsView.as_view(), name="workspaces" ),
-    path( "goals/<int:pk>", GoalsDetailView.as_view(), name="workspaces" ),
-#     path( "workspaces/<int:pk>/goals/<int:goal_id>/<int:task_id>", WorkspaceGoalsTaskDetailView.as_view(), name="workspaces" ),
+    path( "workspaces/<int:pk>", WorkspaceDetailView.as_view(), name="workspaces-goals" ), #Aprobada
+    path( "workspaces/<int:pk>/goals", WorkspaceGoalsView.as_view(), name="goals" ),
+    path("goal/", GoalView.as_view(), name="goal"),
+    path( "goals/<int:pk>", GoalsDetailView.as_view(), name="goals-tasks" ),
+    path("task/", TaskView.as_view(), name="task"),
+    path( "task/<int:pk>", TaskDetailView.as_view(), name="task-detail" ),
 
 #     # Reward
 #     path( "rewards/", RewardView.as_view(), name="reward" ),
@@ -80,14 +78,4 @@ urlpatterns = [
 
 #     # Multiplicator
 #     path( "multiplicators/", MultiplicatorView.as_view(), name="multiplicator-list-create" ),
-
-
-#     # # Goal
-#     # path( "goals/", GoalListCreateAPIView.as_view(), name="goal-list-create" ),
-
-#     # path( "team_users/<int:pk>", TeamUserRetrieveUpdateDestroyAPIView.as_view(), name="team_user-retrieve-update-destroy" ),
-
-#     # Task
-#     # path( "tasks/", TaskListCreateAPIView.as_view(), name="team_user-list-create" ),
-#     # path( "tasks/<int:pk>", TaskRetrieveUpdateDestroyAPIView.as_view(), name="team_user-retrieve-update-destroy" ),
 ]

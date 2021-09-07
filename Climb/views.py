@@ -23,10 +23,8 @@ from .serializers import (
     UserAdminSerializer,
     UserMemberSerializer,
     UserGetSerializer,
-    # RecoveryPassSerializer,
     RoleListModelSerializer,
     RoleModelSerializer,
-    # WorkspaceRetrieveModelSerializer,
 
     # Workspace
     WorkspacesSerializer,
@@ -52,9 +50,6 @@ from .serializers import (
     # BadgeSerializar,
     # BadgeListModelSerializer,
     # BadgeModelSerializer,
-
-    # # TeamUser
-    # TeamUserSerializar,
 )
 
 # Models
@@ -199,6 +194,8 @@ class UserAdminView(APIView):
 
         return Response(data="wrong parameters")
 
+        #Delete
+
 class UserMemberView(APIView):
     
     def get(self, request, pk):
@@ -241,6 +238,8 @@ class UserMemberView(APIView):
 
         return Response(data="wrong parameters")
 
+        # Delete
+
 
 # Vista para desloguear al usuario.
 class LogoutView(APIView):
@@ -252,27 +251,6 @@ class LogoutView(APIView):
         }
 
         return response
-
-# class RecoveryPassView(PasswordResetView):
-#     def patch(self, request):
-        
-#         token = request.COOKIES.get('token')
-#         if not token:
-#             raise AuthenticationFailed('Unauthenticated!')
-#         try:
-#             payload = jwt.decode(token, 'secret', algorithms=["HS256"])
-#         except jwt.ExpiredSignatureError:
-#             raise AuthenticationFailed('Unauthenticated!')
-
-#         user = User.objects.filter(id=payload['id']).first()
-
-#         serializer = RecoveryPassSerializer(user, data=request.data, partial=True)
-        
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-
-#         return Response(data="wrong parameters")
 
 
 class ChangePasswordView(generics.UpdateAPIView):
@@ -321,8 +299,6 @@ class ChangePasswordView(generics.UpdateAPIView):
 
 
 
-
-
 # Vista que permite crear nuevos roles de usuarios y listarlos
 class RoleView(generics.ListCreateAPIView):
     queryset = Role.objects.all()
@@ -334,6 +310,7 @@ class RoleView(generics.ListCreateAPIView):
             serializer_class = RoleModelSerializer
 
         return serializer_class
+
 
 # ''' Workspace '''
 class WorkspaceView( APIView ): 
@@ -375,6 +352,7 @@ class WorkspaceView( APIView ):
         return Response( serializer.errors )
 
 
+
 class WorkspaceDetailView( APIView ):
     def get( self, request, pk ):
 
@@ -414,6 +392,8 @@ class WorkspaceDetailView( APIView ):
 
         return Response(data="wrong parameters")
 
+        # Delete
+
 class WorkspaceGoalsView( APIView ):
     def get( self, request, pk ):
         token = request.COOKIES.get('token')
@@ -430,6 +410,12 @@ class WorkspaceGoalsView( APIView ):
         goals_serializer = GoalSerializer( goals, many=True )
 
         return Response( goals_serializer.data )
+
+class GoalView(APIView):
+    pass
+
+    #Post
+
 
 class GoalsDetailView( APIView ):
     def get( self, request, pk ):
@@ -470,12 +456,25 @@ class GoalsDetailView( APIView ):
 
         return Response(data="wrong parameters")
 
-# class WorkspaceGoalsTaskDetailView( APIView ):
-#     def get( self, request, pk, goal_id, task_id ):
-#         task = Task.objects.filter( id = task_id ).first()
-#         task_serializer = TaskSerializer( task )
+        # Delete
 
-#         return Response( task_serializer.data )
+
+class TaskView( APIView ):
+    pass
+
+    #Post
+
+class TaskDetailView( APIView ):
+    def get( self, request, pk ):
+        task = Task.objects.filter( id = task_id ).first()
+        task_serializer = TaskSerializer( task )
+
+        return Response( task_serializer.data )
+
+    # Patch
+
+    # Delete
+
 
 
 # ''' Reward '''
@@ -562,24 +561,5 @@ class GoalsDetailView( APIView ):
 #         multiplicators = Multiplicator.objects.filter(company_user=payload['id']).first()
 
 #         serializer = MultiplicatorSerializar(multiplicators)
-
-#         return Response(serializer.data)
-
-# ''' TeamUser '''
-# class TeamUserView( APIView ):
-#     def get(self, request):
-#         token = request.COOKIES.get('token')
-
-#         if not token:
-#             raise AuthenticationFailed('Unauthenticated!')
-
-#         try:
-#             payload = jwt.decode(token, 'secret', algorithms=["HS256"])
-#         except jwt.ExpiredSignatureError:
-#             raise AuthenticationFailed('Unauthenticated!')
-
-#         team_users = TeamUser.objects.filter(company_user=payload['id']).first()
-
-#         serializer = TeamUserSerializar(team_users)
 
 #         return Response(serializer.data)

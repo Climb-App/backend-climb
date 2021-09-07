@@ -13,17 +13,6 @@ from .models import (
     )
 
 
-# ''' Company User Models Serializer '''
-# class CompanyUserListModelSerializer( serializers.ModelSerializer ):
-#     class Meta:
-#         model = CompanyUser
-#         fields = [ "id", "name","email", "username", "password", "role_id" ]
-
-# class CompanyUserModelSerializer( serializers.ModelSerializer ):
-#     class Meta:
-#         model = CompanyUser
-#         fields = ["user","rfc","avatar","address"]
-
 
 # ''' Reward Models Serializer '''
 # class RewardListModelSerializer( serializers.ModelSerializer ):
@@ -76,37 +65,6 @@ from .models import (
     #     fields = [ "id", "name", "streak", "company_user" ]
 
 
-# class WorkspaceRetrieveModelSerializer( serializers.ModelSerializer ):
-#     company_user_id = CompanyUser
-#     class Meta:
-#         model = Workspace
-#         fields = [ "id", "name", "description", "company_user" ]
-
-# ''' Goal'''
-# class GoalListModelSerializer( serializers.ModelSerializer ):
-#     class Meta:
-#         model = Goal
-#         fields = [ "id", "name", "description", "deadline", "progress", "workspace_id" ]
-
-# class GoalRetrieveModelSerializer( serializers.ModelSerializer ):
-#     workspace_id = Workspace
-
-#     class Meta:
-#         model = Goal
-#         fields = [ "id", "name", "description", "deadline", "progress", "workspace_id" ]
-
-# class WorkspaceListModelSerializer( serializers.ModelSerializer ):
-#     class Meta:
-#         model = Workspace
-#         fields = '__all__'
-
-
-# class UserListModelSerializer (serializers.ModelSerializer):
-  
-#     class Meta:
-#         model = User
-#         fields = ["first_name","last_name","email","username","password"]      
- 
 
  #### Serializadores para crear Nuevos Roles de Usuarios
 class RoleListModelSerializer( serializers.ModelSerializer ):
@@ -119,38 +77,6 @@ class RoleModelSerializer( serializers.ModelSerializer ):
         model = Role
         fields = [ 'name' ] 
 
-
-# class CompanyUserListModelSerializer(serializers.ModelSerializer):
-#     user=UserListModelSerializer()
-#     role=RoleListModelSerializer()
-    
-#     class Meta:
-#         model = CompanyUser
-#         fields = ["user","rfc","avatar","address","role"]
-
-
-
-# class TeamUserListModelSerializer(serializers.ModelSerializer):
-#     user=UserListModelSerializer()
-#     role=RoleListModelSerializer()
-#     class Meta:
-#         model = TeamUser
-#         fields = ["user","avatar","points_earned","points_available","multiplicator","role","company_user","workspace","reward"]
-
-# class CompanyUserRetrieveModelSerializer( serializers.ModelSerializer ):
-#     role = RoleListModelSerializer()
-#     user=UserListModelSerializer()
-    
-#     class Meta:
-#         model = CompanyUser
-#         fields = ["user","rfc","avatar","address","role"]
-
- 
-
- #######################################################                                   
-
-
-####### Vic
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -241,31 +167,6 @@ class UserGetSerializer(serializers.ModelSerializer):
         return instance
 
 
-
-
-# class RecoveryPassSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = User 
-#         fields = ['password']
-        
-#         extra_kwargs = {
-#             'password': {'write_only': True}
-#         }
-#         def create(self, validated_data):
-#             password = validated_data.pop('password', None)
-#             instance = self.Meta.model(**validated_data)
-#             if password is not None:
-#                 instance.set_password(password)
-#             instance.save()
-#             return instance
-
-#         def update(self, instance, validated_data):
-#             instance.password = validated_data['password']
-#             self.Meta.create(instance.password)
-
-#             return Response({"Message": "success"})
-
-
 class ChangePasswordSerializer(serializers.Serializer):
     model = User
 
@@ -274,7 +175,6 @@ class ChangePasswordSerializer(serializers.Serializer):
     """
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
-
 
 
 class GoalSerializer( serializers.ModelSerializer ):    
@@ -351,16 +251,5 @@ class WorkspaceDetailSerializer(serializers.ModelSerializer):
 #             'id',
 #             'name',
 #             'streak',
-#             'company_user'
-#         ]
-
-# class TeamUserSerializar(serializers.ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = [
-#             'id',
-#             'username',
-#             'email',
-#             'password',
 #             'company_user'
 #         ]
