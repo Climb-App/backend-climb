@@ -18,18 +18,21 @@ from .views import (
     WorkspaceView,
     WorkspaceDetailView,
     WorkspaceGoalsView,
-    GoalView,
+    GoalCreateView,
     GoalsDetailView,
-    TaskView,
+    TaskCreateView,
     TaskDetailView,
 
-#     # Reward
-#     RewardView,
-#     RewardListCreateAPIView,
+    # Reward
+    RewardUserView,
+    RewardCreateView,
+    RewardDetailView,
 
-#     # Badge
-#     BadgeView,
-#     BadgeListCreateAPIView,
+
+    # Badge
+    BadgeUserView,
+    BadgeCreateView,
+    BadgeDetailView,
 
 #     # Multiplicator
 #     MultiplicatorView,
@@ -61,21 +64,24 @@ urlpatterns = [
 
     # Workspace
     path( "workspaces/", WorkspaceView.as_view(), name="workspaces" ),
-    path( "workspaces/<int:pk>", WorkspaceDetailView.as_view(), name="workspaces-goals" ), #Aprobada
+    path( "workspaces/<int:pk>/", WorkspaceDetailView.as_view(), name="workspaces-goals" ), #Aprobada
     path( "workspaces/<int:pk>/goals", WorkspaceGoalsView.as_view(), name="goals" ),
-    path("goal/", GoalView.as_view(), name="goal"),
-    path( "goals/<int:pk>", GoalsDetailView.as_view(), name="goals-tasks" ),
-    path("task/", TaskView.as_view(), name="task"),
-    path( "task/<int:pk>", TaskDetailView.as_view(), name="task-detail" ),
+    path("goal/", GoalCreateView.as_view(), name="goal"),
+    path( "goals/<int:pk>/", GoalsDetailView.as_view(), name="goals-tasks" ),
+    path("task/", TaskCreateView.as_view(), name="task"),
+    path( "task/<int:pk>/", TaskDetailView.as_view(), name="task-detail" ),
 
-#     # Reward
-#     path( "rewards/", RewardView.as_view(), name="reward" ),
-#     path( "rewards_test/", RewardListCreateAPIView.as_view(), name="reward-list-create" ),
+    # Reward
+    path( "reward/user/", RewardUserView.as_view(), name="reward-member" ),
+    path( "reward/", RewardCreateView.as_view(), name="reward" ),
+    path( "reward/<int:pk>/", RewardDetailView.as_view(), name="reward-detail" ),
 
-#     # Badge
-#     path( "badges/", BadgeView.as_view(), name="badge" ),
-#     path( "badges_test/", BadgeListCreateAPIView.as_view(), name="badge-list-create" ),
 
-#     # Multiplicator
-#     path( "multiplicators/", MultiplicatorView.as_view(), name="multiplicator-list-create" ),
+    # Badge
+    path( "badges/user/", BadgeUserView.as_view(), name="badge-member" ),
+    path( "badges/", BadgeCreateView.as_view(), name="badge" ),
+    path( "badges/<int:id>/", BadgeDetailView.as_view(), name="badge-detail" ),
+
+    # Multiplicator
+    # path( "multiplicators/", MultiplicatorView.as_view(), name="multiplicator-list-create" ),
 ]
