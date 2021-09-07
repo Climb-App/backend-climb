@@ -153,6 +153,7 @@ class UserView(APIView):
 
 class UserAdminView(APIView):
     
+    ### En este get se esta obteniendo el id directamente del payload y no desde los params, de hecho el pk no esta teniendo ningun uso
     def get(self, request, pk):
         # El backend recibe token del cliente 
         # token = request.COOKIES.get('token')
@@ -168,9 +169,9 @@ class UserAdminView(APIView):
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Unauthenticated!')
 
-        user = User.objects.filter(id=payload['id'])
+        user = User.objects.filter(id=pk).first()
 
-        serializer = UserAdminSerializer(user, many=True)
+        serializer = UserAdminSerializer(user)
 
         return Response(serializer.data)
 
@@ -196,12 +197,30 @@ class UserAdminView(APIView):
 
         return Response(data="wrong parameters")
 
-        #Delete
+    # delete method for remove user with pk
+    def delete( self, request, pk ):
+
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        user = User.objects.filter(id=pk).first()
+        user.delete()
+
+        return Response( 'User deleted' )
 
 class UserMemberView(APIView):
-    
+   
     def get(self, request, pk):
-        # El backend recibe token del cliente 
+        
         # token = request.COOKIES.get('token')
         token = request.headers['Authorization']
 
@@ -215,7 +234,7 @@ class UserMemberView(APIView):
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Unauthenticated!')
 
-        user = User.objects.filter(id=payload['id'])
+        user = User.objects.filter(id=pk)
 
         serializer = UserMemberSerializer(user, many=True)
 
@@ -243,19 +262,37 @@ class UserMemberView(APIView):
 
         return Response(data="wrong parameters")
 
-        # Delete
+    # delete method for remove user with pk
+    def delete( self, request, pk ):
+
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        user = User.objects.filter(id=pk).first()
+        user.delete()
+
+        return Response( 'User deleted' )
 
 
 # Vista para desloguear al usuario.
-class LogoutView(APIView):
-    def post(self, request):
-        response = Response()
-        # response.delete_cookie('token')
-        response.data = {
-            'message': 'success'
-        }
+# class LogoutView(APIView):
+#     def post(self, request):
+#         response = Response()
+#         # response.delete_cookie('token')
+#         response.data = {
+#             'message': 'success'
+#         }
 
-        return response
+#         return response
 
 
 class ChangePasswordView(generics.UpdateAPIView):
@@ -361,8 +398,6 @@ class WorkspaceView( APIView ):
 
         return Response( serializer.errors )
 
-
-
 class WorkspaceDetailView( APIView ):
     #Obtiene el detalle del workspace mediante su Id
     def get( self, request, pk ):
@@ -406,7 +441,23 @@ class WorkspaceDetailView( APIView ):
 
         return Response(data="wrong parameters")
 
-        # Delete
+    # delete method for remove workspace with pk
+    def delete( self, request, pk ):
+        token = request.COOKIES.get('token')
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        workspace = Workspace.objects.filter(id=pk).first()
+        workspace.delete()
+
+        return Response( 'Workspace deleted' )
 
 class WorkspaceGoalsView( APIView ):
 
@@ -475,7 +526,25 @@ class GoalsDetailView( APIView ):
 
         return Response(data="wrong parameters")
 
-        # Delete
+    # delete method for remove workspace with pk
+    def delete( self, request, pk ):
+
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        goal = Goal.objects.filter(id=pk).first()
+        goal.delete()
+
+        return Response( 'Goal deleted' )
 
 
 class TaskCreateView( APIView ):
@@ -503,9 +572,47 @@ class TaskDetailView( APIView ):
 
         return Response( task_serializer.data )
 
-    # Patch
+    def patch(self, request, pk):
+    
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
-    # Delete
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        taks = Task.objects.filter( id = pk ).first()
+        serializer = TaskSerializer(taks, data=request.data, partial=True) # set partial=True to update a data partially
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(data="wrong parameters")
+
+    # delete method for remove workspace with pk
+    def delete( self, request, pk ):
+
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        task = Task.objects.filter(id=pk).first()
+        task.delete()
+
+        return Response( 'Task deleted' )
 
 
 

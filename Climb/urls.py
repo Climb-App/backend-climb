@@ -7,7 +7,7 @@ from .views import (
     RegisterAdminView,
     RegisterMemberView,
     LoginView,
-    LogoutView,
+    # LogoutView,
     UserView,
     UserAdminView,
     UserMemberView,
@@ -54,7 +54,7 @@ urlpatterns = [
 
 
     # Logout
-    path('logout/', LogoutView.as_view(), name = 'logout'),
+    # path('logout/', LogoutView.as_view(), name = 'logout'),
 
     # Recovery Password
     path('change-password/', ChangePasswordView.as_view(), name='change-password'),
@@ -66,10 +66,10 @@ urlpatterns = [
     path( "workspaces/", WorkspaceView.as_view(), name="workspaces" ),
     path( "workspaces/<int:pk>/", WorkspaceDetailView.as_view(), name="workspaces-goals" ), #Aprobada
     path( "workspaces/<int:pk>/goals", WorkspaceGoalsView.as_view(), name="goals" ),
-    path("goal/", GoalCreateView.as_view(), name="goal"),
+    path("goals/", GoalCreateView.as_view(), name="goal"),
     path( "goals/<int:pk>/", GoalsDetailView.as_view(), name="goals-tasks" ),
-    path("task/", TaskCreateView.as_view(), name="task"),
-    path( "task/<int:pk>/", TaskDetailView.as_view(), name="task-detail" ),
+    path("tasks/", TaskCreateView.as_view(), name="task"),
+    path( "tasks/<int:pk>/", TaskDetailView.as_view(), name="task-detail" ),
 
     # Reward
     path( "reward/user/", RewardUserView.as_view(), name="reward-member" ),
