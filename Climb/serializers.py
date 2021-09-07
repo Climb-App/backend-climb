@@ -228,12 +228,9 @@ class UserGetSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'id',
-            'name',
             'role',
         ]
-        extra_kwargs = {
-            'password': {'write_only': True}
-        }
+
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
@@ -242,6 +239,9 @@ class UserGetSerializer(serializers.ModelSerializer):
             instance.set_password(password)
         instance.save()
         return instance
+
+
+
 
 # class RecoveryPassSerializer(serializers.ModelSerializer):
 #     class Meta:

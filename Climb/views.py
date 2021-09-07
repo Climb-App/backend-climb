@@ -157,7 +157,29 @@ class UserView(APIView):
 
         return Response(serializer.data)
 
-    def patch(self, request):
+class UserAdminView(APIView):
+    
+    def get(self, request, pk):
+        # El backend recibe token del cliente 
+        token = request.COOKIES.get('token')
+
+        # Si el token no llega con la peticion, devuelve error de autentificacion
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        # Se decodifica y regresa data del usuario logueado al cliente.
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        user = User.objects.filter(id=payload['id'])
+
+        serializer = UserAdminSerializer(user, many=True)
+
+        return Response(serializer.data)
+
+    def patch(self, request, pk):
     
         token = request.COOKIES.get('token')
         if not token:
@@ -169,16 +191,56 @@ class UserView(APIView):
 
         user = User.objects.filter(id=pk).first()
 
-        if user.role__id == 1:
-            serializer = UserAdminSerializer(user, data=request.data, partial=True)
-        else:
-            serializer = UserMemberSerializer(user, data=request.data, partial=True)
+        serializer = UserAdminSerializer(user, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
 
         return Response(data="wrong parameters")
+
+class UserMemberView(APIView):
+    
+    def get(self, request, pk):
+        # El backend recibe token del cliente 
+        token = request.COOKIES.get('token')
+
+        # Si el token no llega con la peticion, devuelve error de autentificacion
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        # Se decodifica y regresa data del usuario logueado al cliente.
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        user = User.objects.filter(id=payload['id'])
+
+        serializer = UserMemberSerializer(user, many=True)
+
+        return Response(serializer.data)
+
+    def patch(self, request, pk):
+    
+        token = request.COOKIES.get('token')
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        user = User.objects.filter(id=pk).first()
+
+        serializer = UserMemberSerializer(user, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(data="wrong parameters")
+
 
 # Vista para desloguear al usuario.
 class LogoutView(APIView):

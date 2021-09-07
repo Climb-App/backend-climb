@@ -9,6 +9,8 @@ from .views import (
     LoginView,
     UserView,
     LogoutView,
+    UserAdminView,
+    UserMemberView,
     # RecoveryPassView,
     ChangePasswordView,
     RoleView,
@@ -46,6 +48,10 @@ urlpatterns = [
 
     # Get User
     path('user/', UserView.as_view(), name = 'users'),
+    path('user/admin/<int:pk>', UserAdminView.as_view(), name = 'users'),
+    path('user/member/<int:pk>', UserMemberView.as_view(), name = 'users'),
+
+    # path('user/<int:pk>', UserView.as_view(), name = 'users'),
 
     # Logout
     path('logout/', LogoutView.as_view(), name = 'logout'),
@@ -75,8 +81,6 @@ urlpatterns = [
 #     # Multiplicator
 #     path( "multiplicators/", MultiplicatorView.as_view(), name="multiplicator-list-create" ),
 
-#     # TeamUser
-#     # path( "team_users/", TeamUserView.as_view(), name="team_user-list-create" ),
 
 #     # # Goal
 #     # path( "goals/", GoalListCreateAPIView.as_view(), name="goal-list-create" ),
