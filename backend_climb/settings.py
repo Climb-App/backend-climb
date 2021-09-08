@@ -170,4 +170,4 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIT_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'climb.app.back@gmail.com'
-EMAIL_HOST_PASSWORD = 'osfcyynzvguaxygq'
+EMAIL_HOST_PASSWORD = 'diosiurhujolhakc'
