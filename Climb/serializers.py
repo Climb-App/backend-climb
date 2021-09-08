@@ -59,7 +59,6 @@ class UserAdminSerializer(serializers.ModelSerializer):
             'password', 
             'address',
             'role',
-            'avatar,'
         ]
         extra_kwargs = {
             'password': {'write_only': True}
@@ -83,8 +82,9 @@ class UserMemberSerializer(serializers.ModelSerializer):
             'email',
             'password', 
             'role',
-            'company', 
-            'avatar',
+            'company',
+            'available_points',
+            'accumulated_points'
         ]
         extra_kwargs = {
             'password': {'write_only': True}
