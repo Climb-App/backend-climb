@@ -23,10 +23,8 @@ from .serializers import (
     UserAdminSerializer,
     UserMemberSerializer,
     UserGetSerializer,
-    # RecoveryPassSerializer,
     RoleListModelSerializer,
     RoleModelSerializer,
-    # WorkspaceRetrieveModelSerializer,
 
     # Workspace
     WorkspacesSerializer,
@@ -40,21 +38,13 @@ from .serializers import (
     TaskSerializer,
 
     # Reward
-    # RewardSerializar,
-    # RewardModelSerializer,
-    # RewardListModelSerializer,
-    # RewardRetrieveModelSerializer,
+    RewardSerializer,
+
+    # Badge
+    BadgeSerializer,
 
     # Multiplicator
     # MultiplicatorSerializar,
-
-    # Badge
-    # BadgeSerializar,
-    # BadgeListModelSerializer,
-    # BadgeModelSerializer,
-
-    # # TeamUser
-    # TeamUserSerializar,
 )
 
 # Models
@@ -74,6 +64,9 @@ from .models import (
 
 # Vista para crear SuperUsuarios
 class RegisterView(APIView):
+
+    def send_email(mail):
+        pass
 
     def post(self, request):
         serializer = UserSerializer(data = request.data)
@@ -126,7 +119,7 @@ class LoginView(APIView):
 
         response = Response()
 
-        response.set_cookie(key='token', value=token, httponly=True)
+        # response.set_cookie(key='token', value=token, httponly=True)
 
         response.data = {
             'token': token
@@ -139,7 +132,8 @@ class UserView(APIView):
 
     def get(self, request):
         # El backend recibe token del cliente 
-        token = request.COOKIES.get('token')
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
         # Si el token no llega con la peticion, devuelve error de autentificacion
         if not token:
@@ -159,9 +153,11 @@ class UserView(APIView):
 
 class UserAdminView(APIView):
     
+    ### En este get se esta obteniendo el id directamente del payload y no desde los params, de hecho el pk no esta teniendo ningun uso
     def get(self, request, pk):
         # El backend recibe token del cliente 
-        token = request.COOKIES.get('token')
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
         # Si el token no llega con la peticion, devuelve error de autentificacion
         if not token:
@@ -173,15 +169,17 @@ class UserAdminView(APIView):
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Unauthenticated!')
 
-        user = User.objects.filter(id=payload['id'])
+        user = User.objects.filter(id=pk).first()
 
-        serializer = UserAdminSerializer(user, many=True)
+        serializer = UserAdminSerializer(user)
 
         return Response(serializer.data)
 
     def patch(self, request, pk):
     
-        token = request.COOKIES.get('token')
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
+
         if not token:
             raise AuthenticationFailed('Unauthenticated!')
         try:
@@ -199,11 +197,32 @@ class UserAdminView(APIView):
 
         return Response(data="wrong parameters")
 
+    # delete method for remove user with pk
+    def delete( self, request, pk ):
+
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        user = User.objects.filter(id=pk).first()
+        user.delete()
+
+        return Response( 'User deleted' )
+
 class UserMemberView(APIView):
-    
+   
     def get(self, request, pk):
-        # El backend recibe token del cliente 
-        token = request.COOKIES.get('token')
+        
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
         # Si el token no llega con la peticion, devuelve error de autentificacion
         if not token:
@@ -215,7 +234,7 @@ class UserMemberView(APIView):
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Unauthenticated!')
 
-        user = User.objects.filter(id=payload['id'])
+        user = User.objects.filter(id=pk)
 
         serializer = UserMemberSerializer(user, many=True)
 
@@ -223,7 +242,9 @@ class UserMemberView(APIView):
 
     def patch(self, request, pk):
     
-        token = request.COOKIES.get('token')
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
+
         if not token:
             raise AuthenticationFailed('Unauthenticated!')
         try:
@@ -241,38 +262,37 @@ class UserMemberView(APIView):
 
         return Response(data="wrong parameters")
 
+    # delete method for remove user with pk
+    def delete( self, request, pk ):
+
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        user = User.objects.filter(id=pk).first()
+        user.delete()
+
+        return Response( 'User deleted' )
+
 
 # Vista para desloguear al usuario.
-class LogoutView(APIView):
-    def post(self, request):
-        response = Response()
-        response.delete_cookie('token')
-        response.data = {
-            'message': 'success'
-        }
+# class LogoutView(APIView):
+#     def post(self, request):
+#         response = Response()
+#         # response.delete_cookie('token')
+#         response.data = {
+#             'message': 'success'
+#         }
 
-        return response
-
-# class RecoveryPassView(PasswordResetView):
-#     def patch(self, request):
-        
-#         token = request.COOKIES.get('token')
-#         if not token:
-#             raise AuthenticationFailed('Unauthenticated!')
-#         try:
-#             payload = jwt.decode(token, 'secret', algorithms=["HS256"])
-#         except jwt.ExpiredSignatureError:
-#             raise AuthenticationFailed('Unauthenticated!')
-
-#         user = User.objects.filter(id=payload['id']).first()
-
-#         serializer = RecoveryPassSerializer(user, data=request.data, partial=True)
-        
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-
-#         return Response(data="wrong parameters")
+#         return response
 
 
 class ChangePasswordView(generics.UpdateAPIView):
@@ -284,7 +304,9 @@ class ChangePasswordView(generics.UpdateAPIView):
 
     def get_object(self, request): #######
 
-        token = request.COOKIES.get('token')
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
+
         # Si el token no llega con la peticion, devuelve error de autentificacion
         if not token:
             raise AuthenticationFailed('Unauthenticated!')
@@ -321,8 +343,6 @@ class ChangePasswordView(generics.UpdateAPIView):
 
 
 
-
-
 # Vista que permite crear nuevos roles de usuarios y listarlos
 class RoleView(generics.ListCreateAPIView):
     queryset = Role.objects.all()
@@ -335,10 +355,12 @@ class RoleView(generics.ListCreateAPIView):
 
         return serializer_class
 
+
 # ''' Workspace '''
 class WorkspaceView( APIView ): 
+    # Obtiene los workspaces relacionados con el usuario que hace la peticion
     def get(self, request):
-        token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
         if not token:
             raise AuthenticationFailed('Unauthenticated!')
@@ -355,8 +377,10 @@ class WorkspaceView( APIView ):
 
         return Response(serializer.data)
     
+    # Crea un nuevo workspaces
     def post( self, request ):
-        token = request.COOKIES.get('token')
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
         if not token:
             raise AuthenticationFailed('Unauthenticated!')
@@ -374,11 +398,12 @@ class WorkspaceView( APIView ):
 
         return Response( serializer.errors )
 
-
 class WorkspaceDetailView( APIView ):
+    #Obtiene el detalle del workspace mediante su Id
     def get( self, request, pk ):
 
-        token = request.COOKIES.get('token')
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
         if not token:
             raise AuthenticationFailed('Unauthenticated!')
@@ -393,9 +418,11 @@ class WorkspaceDetailView( APIView ):
 
         return Response( workspace_serializer.data )
 
+    # Actualiza un workspace mediante su Id
     def patch(self, request, pk):
 
-        token = request.COOKIES.get('token')
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
         if not token:
             raise AuthenticationFailed('Unauthenticated!')
@@ -414,9 +441,30 @@ class WorkspaceDetailView( APIView ):
 
         return Response(data="wrong parameters")
 
-class WorkspaceGoalsView( APIView ):
-    def get( self, request, pk ):
+    # delete method for remove workspace with pk
+    def delete( self, request, pk ):
         token = request.COOKIES.get('token')
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        workspace = Workspace.objects.filter(id=pk).first()
+        workspace.delete()
+
+        return Response( 'Workspace deleted' )
+
+class WorkspaceGoalsView( APIView ):
+
+    # Obtiene los goals de un workspace
+    def get( self, request, pk ):
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
         if not token:
             raise AuthenticationFailed('Unauthenticated!')
@@ -431,10 +479,17 @@ class WorkspaceGoalsView( APIView ):
 
         return Response( goals_serializer.data )
 
+class GoalCreateView(APIView):
+    pass
+
+    #Post
+
+
 class GoalsDetailView( APIView ):
     def get( self, request, pk ):
 
-        token = request.COOKIES.get('token')
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
         if not token:
             raise AuthenticationFailed('Unauthenticated!')
@@ -451,7 +506,8 @@ class GoalsDetailView( APIView ):
 
     def patch(self, request, pk):
     
-        token = request.COOKIES.get('token')
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
         if not token:
             raise AuthenticationFailed('Unauthenticated!')
@@ -470,86 +526,241 @@ class GoalsDetailView( APIView ):
 
         return Response(data="wrong parameters")
 
-# class WorkspaceGoalsTaskDetailView( APIView ):
-#     def get( self, request, pk, goal_id, task_id ):
-#         task = Task.objects.filter( id = task_id ).first()
-#         task_serializer = TaskSerializer( task )
+    # delete method for remove workspace with pk
+    def delete( self, request, pk ):
 
-#         return Response( task_serializer.data )
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        goal = Goal.objects.filter(id=pk).first()
+        goal.delete()
+
+        return Response( 'Goal deleted' )
 
 
-# ''' Reward '''
-# class RewardListCreateAPIView( generics.ListCreateAPIView ):
-#     queryset = Reward.objects.all()
-#     serializer_class = RewardListModelSerializer
+class TaskCreateView( APIView ):
+    pass
 
-#     def get_serializer_class(self):
-#         serializer_class = self.serializer_class
-#         if self.request.method == "POST":
-#             serializer_class = RewardModelSerializer
+    #Post
 
-#         return serializer_class
+class TaskDetailView( APIView ):
+    def get( self, request, pk ):
 
-# class RewardsRetrieveUpdateDestroyAPIView( generics.RetrieveUpdateDestroyAPIView ):
-#     queryset = Reward.objects.all()
-#     serializer_class = RewardRetrieveModelSerializer
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
-# class RewardView( APIView ):
-#     def get(self, request):
-#         token = request.COOKIES.get('token')
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
 
-#         if not token:
-#             raise AuthenticationFailed('Unauthenticated!')
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
 
-#         try:
-#             payload = jwt.decode(token, 'secret', algorithms=["HS256"])
-#         except jwt.ExpiredSignatureError:
-#             raise AuthenticationFailed('Unauthenticated!')
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
 
-#         rewards = Reward.objects.filter(company_user=payload['id']).first()
+        task = Task.objects.filter( id = pk ).first()
+        task_serializer = TaskSerializer( task )
 
-#         serializer = RewardSerializar(rewards)
+        return Response( task_serializer.data )
 
-#         return Response(serializer.data)
+    def patch(self, request, pk):
+    
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
-# ''' Badge '''
-# class BadgeListCreateAPIView( generics.ListCreateAPIView ):
-#     queryset = Badge.objects.all()
-#     serializer_class = BadgeListModelSerializer
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
 
-#     def get_serializer_class(self):
-#         serializer_class = self.serializer_class
-#         if self.request.method == "POST":
-#             serializer_class = BadgeModelSerializer
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
 
-#         return serializer_class
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
 
-# class BadgeRetrieveUpdateDestroyAPIView( generics.RetrieveUpdateDestroyAPIView ):
-#     queryset = Badge.objects.all()
-#     serializer_class = BadgeListModelSerializer
+        taks = Task.objects.filter( id = pk ).first()
+        serializer = TaskSerializer(taks, data=request.data, partial=True) # set partial=True to update a data partially
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
 
-# class BadgeView( APIView ):
-#     def get(self, request):
-#         token = request.COOKIES.get('token')
+        return Response(data="wrong parameters")
 
-#         if not token:
-#             raise AuthenticationFailed('Unauthenticated!')
+    # delete method for remove workspace with pk
+    def delete( self, request, pk ):
 
-#         try:
-#             payload = jwt.decode(token, 'secret', algorithms=["HS256"])
-#         except jwt.ExpiredSignatureError:
-#             raise AuthenticationFailed('Unauthenticated!')
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
-#         badges = Badge.objects.filter(company_user=payload['id']).first()
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
 
-#         serializer = BadgeSerializar(badges)
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
 
-#         return Response(serializer.data)
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
 
-# ''' Multiplicator '''
+        task = Task.objects.filter(id=pk).first()
+        task.delete()
+
+        return Response( 'Task deleted' )
+
+
+
+# Reward
+class RewardUserView(APIView):
+    def get(self, request):
+
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+        
+        # Filtramos los rewards que ha ganado el usuario que hace la peticion
+        reward = Reward.objects.filter(user__id=payload['id'])
+
+        serializer = RewardSerializer(reward, many = True)
+
+        return Response(serializer.data)
+
+class RewardDetailView(APIView):
+    def get(self, request, pk):
+
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+        
+        # Filtramos los rewards que ha ganado el usuario que hace la peticion
+        reward = Reward.objects.filter( id = pk )
+
+        serializer = RewardSerializer(reward, many = True)
+
+        return Response(serializer.data)
+
+    # Patch
+
+    # Delete
+
+
+class RewardCreateView(APIView):
+    def post( self, request ):
+
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        serializer = RewardSerializer( data = request.data )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response( serializer.errors )
+
+
+# Badge
+class BadgeUserView(APIView):
+    def get(self, request):
+
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        badges = Badge.objects.filter(user=payload['id']).first()
+
+        serializer = BadgeSerializer(badges)
+
+        return Response(serializer.data)
+
+
+class BadgeDetailView(APIView):
+    def get(self, request, pk):
+
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+        
+        # Filtramos los rewards que ha ganado el usuario que hace la peticion
+        reward = Reward.objects.filter( id = pk )
+
+        serializer = BadgeSerializer(reward, many = True)
+
+        return Response(serializer.data)
+
+    # Patch
+
+    # Delete
+
+
+class BadgeCreateView( APIView ):
+    def post( self, request ):
+
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        serializer = BadgeSerializer( data = request.data )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response( serializer.errors )
+
+
+# Multiplicator
 # class MultiplicatorView( APIView ):
 #     def get(self, request):
 #         token = request.COOKIES.get('token')
+#         token = request.headers['Authorization']
 
 #         if not token:
 #             raise AuthenticationFailed('Unauthenticated!')
@@ -561,25 +772,6 @@ class GoalsDetailView( APIView ):
 
 #         multiplicators = Multiplicator.objects.filter(company_user=payload['id']).first()
 
-#         serializer = MultiplicatorSerializar(multiplicators)
-
-#         return Response(serializer.data)
-
-# ''' TeamUser '''
-# class TeamUserView( APIView ):
-#     def get(self, request):
-#         token = request.COOKIES.get('token')
-
-#         if not token:
-#             raise AuthenticationFailed('Unauthenticated!')
-
-#         try:
-#             payload = jwt.decode(token, 'secret', algorithms=["HS256"])
-#         except jwt.ExpiredSignatureError:
-#             raise AuthenticationFailed('Unauthenticated!')
-
-#         team_users = TeamUser.objects.filter(company_user=payload['id']).first()
-
-#         serializer = TeamUserSerializar(team_users)
+#         serializer = MultiplicatorSerializer(multiplicators)
 
 #         return Response(serializer.data)

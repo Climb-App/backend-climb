@@ -7,11 +7,10 @@ from .views import (
     RegisterAdminView,
     RegisterMemberView,
     LoginView,
+    # LogoutView,
     UserView,
-    LogoutView,
     UserAdminView,
     UserMemberView,
-    # RecoveryPassView,
     ChangePasswordView,
     RoleView,
 
@@ -19,22 +18,24 @@ from .views import (
     WorkspaceView,
     WorkspaceDetailView,
     WorkspaceGoalsView,
+    GoalCreateView,
     GoalsDetailView,
-#     WorkspaceGoalsTaskDetailView,
+    TaskCreateView,
+    TaskDetailView,
 
-#     # Reward
-#     RewardView,
-#     RewardListCreateAPIView,
+    # Reward
+    RewardUserView,
+    RewardCreateView,
+    RewardDetailView,
 
-#     # Badge
-#     BadgeView,
-#     BadgeListCreateAPIView,
+
+    # Badge
+    BadgeUserView,
+    BadgeCreateView,
+    BadgeDetailView,
 
 #     # Multiplicator
 #     MultiplicatorView,
-
-#     # TeamUser
-#     TeamUserView,
 )
 
 urlpatterns = [
@@ -51,13 +52,11 @@ urlpatterns = [
     path('user/admin/<int:pk>', UserAdminView.as_view(), name = 'users'),
     path('user/member/<int:pk>', UserMemberView.as_view(), name = 'users'),
 
-    # path('user/<int:pk>', UserView.as_view(), name = 'users'),
 
     # Logout
-    path('logout/', LogoutView.as_view(), name = 'logout'),
+    # path('logout/', LogoutView.as_view(), name = 'logout'),
 
     # Recovery Password
-    # path('recovery/', RecoveryPassView.as_view(), name = 'recovery'),
     path('change-password/', ChangePasswordView.as_view(), name='change-password'),
 
     # Create Role
@@ -65,29 +64,24 @@ urlpatterns = [
 
     # Workspace
     path( "workspaces/", WorkspaceView.as_view(), name="workspaces" ),
-    path( "workspaces/<int:pk>", WorkspaceDetailView.as_view(), name="workspaces" ), #Aprobada
-    path( "workspaces/<int:pk>/goals", WorkspaceGoalsView.as_view(), name="workspaces" ),
-    path( "goals/<int:pk>", GoalsDetailView.as_view(), name="workspaces" ),
-#     path( "workspaces/<int:pk>/goals/<int:goal_id>/<int:task_id>", WorkspaceGoalsTaskDetailView.as_view(), name="workspaces" ),
+    path( "workspaces/<int:pk>/", WorkspaceDetailView.as_view(), name="workspaces-goals" ), #Aprobada
+    path( "workspaces/<int:pk>/goals", WorkspaceGoalsView.as_view(), name="goals" ),
+    path("goals/", GoalCreateView.as_view(), name="goal"),
+    path( "goals/<int:pk>/", GoalsDetailView.as_view(), name="goals-tasks" ),
+    path("tasks/", TaskCreateView.as_view(), name="task"),
+    path( "tasks/<int:pk>/", TaskDetailView.as_view(), name="task-detail" ),
 
-#     # Reward
-#     path( "rewards/", RewardView.as_view(), name="reward" ),
-#     path( "rewards_test/", RewardListCreateAPIView.as_view(), name="reward-list-create" ),
-
-#     # Badge
-#     path( "badges/", BadgeView.as_view(), name="badge" ),
-#     path( "badges_test/", BadgeListCreateAPIView.as_view(), name="badge-list-create" ),
-
-#     # Multiplicator
-#     path( "multiplicators/", MultiplicatorView.as_view(), name="multiplicator-list-create" ),
+    # Reward
+    path( "reward/user/", RewardUserView.as_view(), name="reward-member" ),
+    path( "reward/", RewardCreateView.as_view(), name="reward" ),
+    path( "reward/<int:pk>/", RewardDetailView.as_view(), name="reward-detail" ),
 
 
-#     # # Goal
-#     # path( "goals/", GoalListCreateAPIView.as_view(), name="goal-list-create" ),
+    # Badge
+    path( "badges/user/", BadgeUserView.as_view(), name="badge-member" ),
+    path( "badges/", BadgeCreateView.as_view(), name="badge" ),
+    path( "badges/<int:id>/", BadgeDetailView.as_view(), name="badge-detail" ),
 
-#     # path( "team_users/<int:pk>", TeamUserRetrieveUpdateDestroyAPIView.as_view(), name="team_user-retrieve-update-destroy" ),
-
-#     # Task
-#     # path( "tasks/", TaskListCreateAPIView.as_view(), name="team_user-list-create" ),
-#     # path( "tasks/<int:pk>", TaskRetrieveUpdateDestroyAPIView.as_view(), name="team_user-retrieve-update-destroy" ),
+    # Multiplicator
+    # path( "multiplicators/", MultiplicatorView.as_view(), name="multiplicator-list-create" ),
 ]
