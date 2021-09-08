@@ -51,6 +51,8 @@ class User(AbstractUser):
     rfc = models.CharField( max_length=13, blank=True, null=True )
     address = models.CharField( max_length=255 )
     company = models.IntegerField( null=True )
+    available_points = models.IntegerField( null=True )
+    accumulated_points = models.IntegerField( null=True )
     created_at = models.DateTimeField(auto_now_add=True)
 
     USERNAME_FIELD = 'email'
