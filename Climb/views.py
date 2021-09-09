@@ -119,7 +119,7 @@ class LoginView(APIView):
 
         response = Response()
 
-        # response.set_cookie(key='token', value=token, httponly=True)
+        response.set_cookie(key='token', value=token, httponly=True)
 
         response.data = {
             'token': token
@@ -156,8 +156,8 @@ class UserAdminView(APIView):
     ### En este get se esta obteniendo el id directamente del payload y no desde los params, de hecho el pk no esta teniendo ningun uso
     def get(self, request, pk):
         # El backend recibe token del cliente 
-        # token = request.COOKIES.get('token')
-        token = request.headers['Authorization']
+        token = request.COOKIES.get('token')
+        # token = request.headers['Authorization']
 
         # Si el token no llega con la peticion, devuelve error de autentificacion
         if not token:
@@ -221,8 +221,8 @@ class UserMemberView(APIView):
    
     def get(self, request, pk):
         
-        # token = request.COOKIES.get('token')
-        token = request.headers['Authorization']
+        token = request.COOKIES.get('token')
+        # token = request.headers['Authorization']
 
         # Si el token no llega con la peticion, devuelve error de autentificacion
         if not token:
@@ -234,9 +234,9 @@ class UserMemberView(APIView):
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Unauthenticated!')
 
-        user = User.objects.filter(id=pk)
+        user = User.objects.filter(id=pk).first()
 
-        serializer = UserMemberSerializer(user, many=True)
+        serializer = UserMemberSerializer(user)
 
         return Response(serializer.data)
 
