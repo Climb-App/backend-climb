@@ -234,9 +234,9 @@ class UserMemberView(APIView):
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Unauthenticated!')
 
-        user = User.objects.filter(id=pk)
+        user = User.objects.filter(id=pk).first()
 
-        serializer = UserMemberSerializer(user, many=True)
+        serializer = UserMemberSerializer(user)
 
         return Response(serializer.data)
 
