@@ -360,6 +360,7 @@ class RoleView(generics.ListCreateAPIView):
 class WorkspaceView( APIView ): 
     # Obtiene los workspaces relacionados con el usuario que hace la peticion
     def get(self, request):
+        # token = request.COOKIES.get('token')
         token = request.headers['Authorization']
 
         if not token:
@@ -701,9 +702,9 @@ class BadgeUserView(APIView):
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Unauthenticated!')
 
-        badges = Badge.objects.filter(user=payload['id']).first()
+        badges = Badge.objects.filter(user__id=payload['id'])
 
-        serializer = BadgeSerializer(badges)
+        serializer = BadgeSerializer(badges, many = True)
 
         return Response(serializer.data)
 
@@ -723,9 +724,9 @@ class BadgeDetailView(APIView):
             raise AuthenticationFailed('Unauthenticated!')
         
         # Filtramos los rewards que ha ganado el usuario que hace la peticion
-        reward = Reward.objects.filter( id = pk )
+        badges = Badge.objects.filter( id = pk )
 
-        serializer = BadgeSerializer(reward, many = True)
+        serializer = BadgeSerializer(badges, many = True)
 
         return Response(serializer.data)
 
