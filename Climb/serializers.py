@@ -101,6 +101,7 @@ class UserMemberSerializer(serializers.ModelSerializer):
         return instance
 
 class UsersMemberSerializer(serializers.ModelSerializer):
+    # role = RoleModelSerializer()
     class Meta:
         model = User
         fields = [
