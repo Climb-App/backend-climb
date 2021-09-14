@@ -883,7 +883,7 @@ class UsersUserView(APIView):
             raise AuthenticationFailed('Unauthenticated!')
         
         # Filtramos los rewards que ha ganado el usuario que hace la peticion
-        users = user.objects.filter( company = payload['id'] )
+        users = User.objects.filter( company = payload['id'] )
 
         serializer = UserMemberSerializer(users)
 
