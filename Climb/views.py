@@ -22,6 +22,7 @@ from .serializers import (
     UserSerializer,
     UserAdminSerializer,
     UserMemberSerializer,
+    UsersMemberSerializer,
     UserGetSerializer,
     RoleListModelSerializer,
     RoleModelSerializer,
@@ -885,7 +886,7 @@ class UsersUserView(APIView):
         # Filtramos los rewards que ha ganado el usuario que hace la peticion
         users = User.objects.filter( company = payload['id'] )
 
-        serializer = UserMemberSerializer(users)
+        serializer = UsersMemberSerializer(users)
 
         return Response(serializer.data)
 
