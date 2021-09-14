@@ -47,7 +47,7 @@ class User(AbstractUser):
     email = models.EmailField(blank=True, max_length=255, unique=True)
     password = models.CharField(max_length=255)
     username = None
-    avatar = models.CharField(max_length=500, blank=True )
+    avatar = models.CharField(max_length=1000, blank=True )
     rfc = models.CharField( max_length=13, blank=True, null=True )
     address = models.CharField( max_length=255 )
     company = models.IntegerField( null=True )
@@ -73,19 +73,19 @@ class Workspace(models.Model):
 class Reward(models.Model):
     name = models.CharField( max_length=100 )
     description = models.TextField()
-    icon = models.CharField(max_length=500,blank=True, null=True )
+    icon = models.CharField(max_length=1000,blank=True, null=True )
     points_needed = models.IntegerField()
     status = models.CharField(blank=True, max_length=50 )
     user = models.ManyToManyField( User )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.name} {self.description}"
 
 class Badge(models.Model):
     name = models.CharField( max_length=100 )
     description = models.TextField()
-    icon = models.CharField(max_length=255, blank=True, null=True )
+    icon = models.CharField(max_length=1000, blank=True, null=True )
     points_needed_min = models.IntegerField()
     points_needed_max = models.IntegerField()
     user = models.ManyToManyField( User )
