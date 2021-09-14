@@ -886,7 +886,7 @@ class UsersUserView(APIView):
         # Filtramos los rewards que ha ganado el usuario que hace la peticion
         users = User.objects.filter( company = payload['id'] )
 
-        serializer = UsersMemberSerializer(users)
+        serializer = UsersMemberSerializer(users, many = True)
 
         return Response(serializer.data)
 
