@@ -481,9 +481,26 @@ class WorkspaceGoalsView( APIView ):
         return Response( goals_serializer.data )
 
 class GoalCreateView(APIView):
-    pass
+    
+    def post( self, request ):
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
-    #Post
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        serializer = GoalSerializer( data = request.data )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response( serializer.errors )
 
 
 class GoalsDetailView( APIView ):
@@ -549,9 +566,26 @@ class GoalsDetailView( APIView ):
 
 
 class TaskCreateView( APIView ):
-    pass
 
-    #Post
+    def post( self, request ):
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        serializer = TaskSerializer( data = request.data )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response( serializer.errors )
 
 class TaskDetailView( APIView ):
     def get( self, request, pk ):
@@ -660,9 +694,48 @@ class RewardDetailView(APIView):
 
         return Response(serializer.data)
 
-    # Patch
+    def patch(self, request, pk):
+        
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
-    # Delete
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        reward = Reward.objects.filter( id = pk ).first()
+
+        serializer = RewardSerializer(reward, data=request.data, partial=True) # set partial=True to update a data partially
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(data="wrong parameters")
+
+    # delete method for remove workspace with pk
+    def delete( self, request, pk ):
+
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        reward = Reward.objects.filter(id=pk).first()
+        reward.delete()
+
+        return Response( 'Task deleted' )
 
 
 class RewardCreateView(APIView):
@@ -730,9 +803,48 @@ class BadgeDetailView(APIView):
 
         return Response(serializer.data)
 
-    # Patch
+    def patch(self, request, pk):
+        
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
 
-    # Delete
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        badge = Badge.objects.filter( id = pk ).first()
+
+        serializer = BadgeSerializer(badge, data=request.data, partial=True) # set partial=True to update a data partially
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(data="wrong parameters")
+
+    # delete method for remove workspace with pk
+    def delete( self, request, pk ):
+
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        badge = Badge.objects.filter(id=pk).first()
+        badge.delete()
+
+        return Response( 'Task deleted' )
 
 
 class BadgeCreateView( APIView ):
@@ -756,6 +868,27 @@ class BadgeCreateView( APIView ):
 
         return Response( serializer.errors )
 
+
+class UsersUserView(APIView):
+    def get(self, request):
+    
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+        
+        # Filtramos los rewards que ha ganado el usuario que hace la peticion
+        users = user.objects.filter( company = payload['id'] )
+
+        serializer = UserMemberSerializer(users)
+
+        return Response(serializer.data)
 
 # Multiplicator
 # class MultiplicatorView( APIView ):

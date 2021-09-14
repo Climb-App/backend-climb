@@ -7,7 +7,7 @@ from .views import (
     RegisterAdminView,
     RegisterMemberView,
     LoginView,
-    # LogoutView,
+    UsersUserView,
     UserView,
     UserAdminView,
     UserMemberView,
@@ -51,6 +51,9 @@ urlpatterns = [
     path('user/', UserView.as_view(), name = 'users'),
     path('user/admin/<int:pk>', UserAdminView.as_view(), name = 'users'),
     path('user/member/<int:pk>', UserMemberView.as_view(), name = 'users'),
+
+    # Get users relations users
+    path('users/', UsersUserView.as_view(), name = 'get_users'),
 
 
     # Logout
