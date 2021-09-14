@@ -781,7 +781,6 @@ class BadgeUserView(APIView):
 
         return Response(serializer.data)
 
-
 class BadgeDetailView(APIView):
     def get(self, request, pk):
 

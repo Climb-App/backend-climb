@@ -107,7 +107,7 @@ class Goal(models.Model):
     name = models.CharField( max_length=100 )
     description = models.TextField()
     deadline = models.DateField()
-    progress = models.IntegerField()
+    progress = models.IntegerField(blank=True, null=True)
     workspace = models.ForeignKey( Workspace, on_delete=models.CASCADE, related_name="goals" )
     created_at = models.DateTimeField(auto_now_add=True)
 
