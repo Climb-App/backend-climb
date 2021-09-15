@@ -518,8 +518,8 @@ class GoalsDetailView( APIView ):
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Unauthenticated!')
 
-        goal = Goal.objects.filter( id = pk ).first()
-        goal_serializer = GoalDetailSerializer( goal )
+        goal = Goal.objects.filter( id = pk )
+        goal_serializer = GoalDetailSerializer( goal, many=True)
 
         return Response( goal_serializer.data )
 
