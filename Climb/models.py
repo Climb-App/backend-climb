@@ -128,9 +128,9 @@ class Task(models.Model):
     points_value = models.IntegerField()
     status = models.CharField( max_length=50, choices=Status_TYPES, default="To Do" )
     start_date = models.DateField(auto_now_add=True) # Falta Migrarlo a la BD
-    end_date = models.DateField(null=True) # Falta Migrarlo a la BD
-    message = models.TextField(null=True) # Falta Migrarlo a la BD
-    message_refused = models.TextField(null=True,blank=True)
+    end_date = models.DateField(blank=True, null=True) # Falta Migrarlo a la BD
+    message = models.TextField(blank=True, null=True) # Falta Migrarlo a la BD
+    message_refused = models.TextField(blank=True, null=True)
     goal = models.ForeignKey( Goal, on_delete=models.CASCADE, related_name="tasks_goal" )
     user = models.ForeignKey( User, on_delete=models.CASCADE, related_name="tasks_user" )
     created_at = models.DateTimeField(auto_now_add=True)
