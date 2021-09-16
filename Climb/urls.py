@@ -68,7 +68,7 @@ urlpatterns = [
 
     # Workspace
     path( "workspaces/", WorkspaceView.as_view(), name="workspaces" ),
-    path( "workspaces/users/", WorkspaceUserView.as_view(), name = "workspacesUsers"),
+    path( "workspaces/users/<int:pk>/", WorkspaceUserView.as_view(), name = "workspacesUsers"),
     path( "workspaces/<int:pk>/", WorkspaceDetailView.as_view(), name="workspaces-goals" ), #Aprobada
     path( "workspaces/<int:pk>/goals", WorkspaceGoalsView.as_view(), name="goals" ),
     path( "goals/", GoalCreateView.as_view(), name="goal"),
@@ -80,7 +80,6 @@ urlpatterns = [
     path( "reward/user/", RewardUserView.as_view(), name="reward-member" ),
     path( "reward/", RewardCreateView.as_view(), name="reward" ),
     path( "reward/<int:pk>/", RewardDetailView.as_view(), name="reward-detail" ),
-
 
     # Badge
     path( "badges/user/", BadgeUserView.as_view(), name="badge-member" ),
