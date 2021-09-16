@@ -255,7 +255,7 @@ class UserMemberView(APIView):
             raise AuthenticationFailed('Unauthenticated!')
 
         user = User.objects.filter(id=pk).first()
-
+ 
         serializer = UserMemberSerializer(user, data=request.data, partial=True)
 
         if serializer.is_valid():

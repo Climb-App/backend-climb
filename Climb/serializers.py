@@ -111,7 +111,11 @@ class UsersMemberSerializer(serializers.ModelSerializer):
             'email',
             'role',
             'company',
+            'available_points',
+            'accumulated_points',
+            'avatar'
         ]
+
 
 
 class UserGetSerializer(serializers.ModelSerializer):
@@ -193,7 +197,7 @@ class WorkspacesUserSerializer(serializers.ModelSerializer):
         ]
 class WorkspaceDetailSerializer(serializers.ModelSerializer):
     goals = GoalSerializer( many=True )
-    
+    user = UsersMemberSerializer( many=True )
     class Meta:
         model = Workspace
         fields = [
