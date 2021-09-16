@@ -146,7 +146,17 @@ class GoalSerializer( serializers.ModelSerializer ):
         model = Goal
         fields = [ "id", "name", "description", "deadline", "progress", "workspace" ]
 
+
+# class UserTaskSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model=User
+#         fields = [
+#             "id",
+#             "name"
+#         ]
+
 class TaskSerializer( serializers.ModelSerializer ):
+    # user = UserTaskSerializer()
     class Meta:
         model = Task
         fields = [ "id", "name", "description", "deadline", "points_value", "status", "start_date", "end_date", "message", "message_refused", "goal", "user" ]

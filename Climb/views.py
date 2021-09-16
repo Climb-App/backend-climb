@@ -403,7 +403,7 @@ class WorkspaceView( APIView ):
 
 class WorkspaceUserView( APIView ): 
     # Obtiene los workspaces relacionados con el usuario que hace la peticion
-    def get(self, request):
+    def get(self, request, pk):
         # token = request.COOKIES.get('token')
         token = request.headers['Authorization']
 
@@ -416,9 +416,9 @@ class WorkspaceUserView( APIView ):
             raise AuthenticationFailed('Unauthenticated!')
         
         # Filtramos los workspaces del usuario que hace la peticion
-        workspaces = Workspace.objects.filter(user__id=payload['id'])
+        users = User.objects.filter(wordspace__id = pk)
 
-        serializer = WorkspacesUserSerializer(workspaces, many = True)
+        serializer = UsersMemberSerializer(users, many = True)
 
         return Response(serializer.data)
 
