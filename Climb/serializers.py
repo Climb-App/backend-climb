@@ -168,6 +168,19 @@ class WorkspacesSerializer(serializers.ModelSerializer):
             'user',
         ]
 
+
+class WorkspacesUserSerializer(serializers.ModelSerializer):
+
+    user = UsersMemberSerializer()
+
+    class Meta:
+        model = Workspace
+        fields = [
+            'id',
+            'name',
+            'description',
+            'user',
+        ]
 class WorkspaceDetailSerializer(serializers.ModelSerializer):
     goals = GoalSerializer( many=True )
     
