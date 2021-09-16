@@ -416,7 +416,7 @@ class WorkspaceUserView( APIView ):
             raise AuthenticationFailed('Unauthenticated!')
         
         # Filtramos los workspaces del usuario que hace la peticion
-        users = User.objects.filter(wordspace__id = pk)
+        users = User.objects.filter(workspace__id = pk)
 
         serializer = UsersMemberSerializer(users, many = True)
 
