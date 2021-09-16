@@ -29,6 +29,7 @@ from .serializers import (
 
     # Workspace
     WorkspacesSerializer,
+    WorkspacesUserSerializer,
     WorkspaceDetailSerializer,
 
     # Goal
@@ -399,6 +400,28 @@ class WorkspaceView( APIView ):
             return Response(serializer.data)
 
         return Response( serializer.errors )
+
+class WorkspaceUserView( APIView ): 
+    # Obtiene los workspaces relacionados con el usuario que hace la peticion
+    def get(self, request):
+        # token = request.COOKIES.get('token')
+        token = request.headers['Authorization']
+
+        if not token:
+            raise AuthenticationFailed('Unauthenticated!')
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Unauthenticated!')
+        
+        # Filtramos los workspaces del usuario que hace la peticion
+        workspaces = Workspace.objects.filter(user__id=payload['id'])
+
+        serializer = WorkspacesUserSerializer(workspaces, many = True)
+
+        return Response(serializer.data)
+
 
 class WorkspaceDetailView( APIView ):
     #Obtiene el detalle del workspace mediante su Id
