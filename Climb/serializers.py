@@ -124,6 +124,7 @@ class UserGetSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'role',
+            'company',
         ]
 
     def create(self, validated_data):
