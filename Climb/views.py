@@ -124,7 +124,7 @@ class LoginView(APIView):
         # response.set_cookie(key='token', value=token, httponly=True)
 
         response.data = {
-            'token': token
+            'token': token,
         }
 
         return response
@@ -759,7 +759,7 @@ class RewardDetailView(APIView):
         reward = Reward.objects.filter(id=pk).first()
         reward.delete()
 
-        return Response( 'Task deleted' )
+        return Response( 'Reward deleted' )
 
 
 class RewardCreateView(APIView):
@@ -867,7 +867,7 @@ class BadgeDetailView(APIView):
         badge = Badge.objects.filter(id=pk).first()
         badge.delete()
 
-        return Response( 'Task deleted' )
+        return Response( 'Badge deleted' )
 
 
 class BadgeCreateView( APIView ):

@@ -84,7 +84,7 @@ urlpatterns = [
     # Badge
     path( "badges/user/", BadgeUserView.as_view(), name="badge-member" ),
     path( "badges/", BadgeCreateView.as_view(), name="badge" ),
-    path( "badges/<int:id>/", BadgeDetailView.as_view(), name="badge-detail" ),
+    path( "badges/<int:pk>/", BadgeDetailView.as_view(), name="badge-detail" ),
 
     # Multiplicator
     # path( "multiplicators/", MultiplicatorView.as_view(), name="multiplicator-list-create" ),
